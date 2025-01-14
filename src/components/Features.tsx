@@ -1,19 +1,19 @@
 export const Features = () => {
   const features = [
     {
-      title: "Astrologie tout en un",
-      description: "Astrologie personnalisée, tarot, numérologie : tout ce dont vous avez besoin pour éclairer votre chemin.",
-      image: "/lovable-uploads/92b44766-c067-4bbb-8387-a9835a556b6c.png"
-    },
-    {
-      title: "Rapports personnalisés",
-      description: "De l'astro bébé aux prévisions annuelles, découvrez ce que les astres vous réservent.",
-      image: "/lovable-uploads/b0dfa52f-f201-4841-bf5c-c57629ebd9cf.png"
-    },
-    {
       title: "Compatibilité amoureuse",
       description: "Analysez votre compatibilité et découvrez le potentiel de vos relations.",
-      image: "/lovable-uploads/2e1222e4-0765-453d-a9ab-5d09aa0c2260.png"
+      image: "/lovable-uploads/337921d3-802a-4a13-8844-92799ccef1bd.png"
+    },
+    {
+      title: "Prédictions personnalisées",
+      description: "Recevez des prédictions détaillées pour chaque saison de votre vie.",
+      image: "/lovable-uploads/dfb0e451-5da5-408b-8428-a9dcafaeaabb.png"
+    },
+    {
+      title: "Questions & Réponses IA",
+      description: "Posez vos questions et obtenez des réponses basées sur votre thème astral.",
+      image: "/lovable-uploads/dacff616-e520-4573-953d-33891a39bac9.png"
     }
   ];
 

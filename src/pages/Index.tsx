@@ -4,10 +4,12 @@ import { AISection } from "@/components/AISection";
 import { Testimonials } from "@/components/Testimonials";
 import { FAQ } from "@/components/FAQ";
 import { Link } from "react-router-dom";
+import { AstralBackground } from "@/components/AstralBackground";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-black">
+      <AstralBackground />
       <Hero />
       <Features />
       <Testimonials />

@@ -47,14 +47,14 @@ export const Hero = () => {
           au bon moment
         </h1>
         <p className="text-lg md:text-xl mb-8 text-gray-300 max-w-2xl mx-auto">
-          Amour, bien-être, carrière, grandes étapes de vie : chaque question trouve une réponse personnalisée, basée sur votre thème astral.
+          Amour, bien-être, carrière, grandes étapes de vie : chaque question trouve une réponse personnalisée, basée sur ton thème astral.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
           <Button
             className="bg-primary hover:bg-primary/90 text-white px-8 py-6 text-lg rounded-full w-full sm:w-auto"
             onClick={() => window.location.href = "https://app.moon-astral.com"}
           >
-            Obtenir ma prédiction personnalisée
+            Obtenir ta prédiction personnalisée
           </Button>
         </div>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

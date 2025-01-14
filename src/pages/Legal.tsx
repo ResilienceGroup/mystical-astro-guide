@@ -9,7 +9,7 @@ const Legal = () => {
   const handleDeletionRequest = () => {
     toast({
       title: "Demande envoyée",
-      description: "Nous traiterons votre demande dans les plus brefs délais.",
+      description: "Nous traiterons ta demande dans les plus brefs délais.",
     });
   };
 
@@ -25,8 +25,8 @@ const Legal = () => {
         <section className="mb-12">
           <h2 className="text-2xl mb-4">Suppression des données personnelles</h2>
           <p className="text-gray-300 mb-6">
-            Conformément au RGPD, vous pouvez demander la suppression de vos données personnelles à tout moment.
-            Cliquez sur le bouton ci-dessous pour initier la procédure.
+            Conformément au RGPD, tu peux demander la suppression de tes données personnelles à tout moment.
+            Clique sur le bouton ci-dessous pour initier la procédure.
           </p>
           <Button onClick={handleDeletionRequest}>
             Demander la suppression de mes données
@@ -40,17 +40,17 @@ const Legal = () => {
           <div className="prose prose-invert">
             <h3>1. Objet</h3>
             <p>
-              Les présentes CGU régissent l'utilisation de l'application Moon Astral, disponible sur iOS et Android.
+              Les présentes CGU régissent ton utilisation de l'application Moon Astral, disponible sur iOS et Android.
             </p>
             
             <h3>2. Services</h3>
             <p>
-              Moon Astral propose des services d'astrologie, de numérologie et de tarots personnalisés.
+              Moon Astral te propose des services d'astrologie, de numérologie et de tarots personnalisés.
             </p>
             
             <h3>3. Protection des données</h3>
             <p>
-              Nous collectons et traitons vos données conformément à notre politique de confidentialité et au RGPD.
+              Nous collectons et traitons tes données conformément à notre politique de confidentialité et au RGPD.
             </p>
             
             <h3>4. Responsabilité</h3>

@@ -14,19 +14,19 @@ export const FAQ = () => {
           <AccordionItem value="item-1" className="border border-white/10 rounded-lg px-4">
             <AccordionTrigger className="text-left">Comment fonctionne Moon Astral ?</AccordionTrigger>
             <AccordionContent>
-              Moon Astral utilise les positions planétaires précises de votre naissance pour créer votre thème astral personnalisé. Notre IA analyse plus de 3 milliards de données astronomiques pour vous fournir des prédictions précises.
+              Moon Astral utilise les positions planétaires précises de ta naissance pour créer ton thème astral personnalisé. Notre IA analyse plus de 3 milliards de données astronomiques pour te fournir des prédictions précises.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2" className="border border-white/10 rounded-lg px-4">
             <AccordionTrigger className="text-left">Les prédictions sont-elles vraiment personnalisées ?</AccordionTrigger>
             <AccordionContent>
-              Oui, chaque prédiction est unique et basée sur votre thème astral personnel, calculé à partir de votre date, heure et lieu de naissance exacts.
+              Oui, chaque prédiction est unique et basée sur ton thème astral personnel, calculé à partir de ta date, heure et lieu de naissance exacts.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-3" className="border border-white/10 rounded-lg px-4">
             <AccordionTrigger className="text-left">Comment sont protégées mes données personnelles ?</AccordionTrigger>
             <AccordionContent>
-              Vos données sont cryptées et stockées de manière sécurisée. Nous respectons strictement le RGPD et vous pouvez demander la suppression de vos données à tout moment via notre page dédiée.
+              Tes données sont cryptées et stockées de manière sécurisée. Nous respectons strictement le RGPD et tu peux demander la suppression de tes données à tout moment via notre page dédiée.
             </AccordionContent>
           </AccordionItem>
         </Accordion>

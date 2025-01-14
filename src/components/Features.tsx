@@ -23,7 +23,7 @@ export const Features = () => {
     <div className="bg-black/95 py-20 px-4">
       <div className="max-w-6xl mx-auto">
         <h2 className="font-display text-3xl md:text-4xl text-white text-center mb-16">
-          Votre guide personnel vers l'illumination
+          Votre guide personnel vers l'épanouissement spirituel
         </h2>
         <div className="grid md:grid-cols-3 gap-12">
           {features.map((feature, index) => (

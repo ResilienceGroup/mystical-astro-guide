@@ -40,6 +40,22 @@ export const Features = () => {
             </div>
           ))}
         </div>
+
+        {/* Achievement badges */}
+        <div className="flex justify-center gap-8 flex-wrap mt-20">
+          <div className="flex items-center gap-2 bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10 animate-fade-up" style={{ animationDelay: '0.1s' }}>
+            <Users className="w-5 h-5 text-primary" />
+            <span className="text-sm font-medium">2 millions d'utilisateurs</span>
+          </div>
+          <div className="flex items-center gap-2 bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10 animate-fade-up" style={{ animationDelay: '0.2s' }}>
+            <Trophy className="w-5 h-5 text-primary" />
+            <span className="text-sm font-medium">Meilleure application du jour</span>
+          </div>
+          <div className="flex items-center gap-2 bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10 animate-fade-up" style={{ animationDelay: '0.3s' }}>
+            <Award className="w-5 h-5 text-primary" />
+            <span className="text-sm font-medium">Ergonomie primée</span>
+          </div>
+        </div>
       </div>
     </div>
   );

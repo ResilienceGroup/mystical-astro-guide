@@ -32,22 +32,6 @@ export const Hero = () => {
           }}
         />
       </div>
-
-      {/* Achievement badges */}
-      <div className="absolute top-8 left-0 right-0 flex justify-center gap-8 flex-wrap z-20">
-        <div className="flex items-center gap-2 bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10 animate-fade-up" style={{ animationDelay: '0.1s' }}>
-          <Users className="w-5 h-5 text-primary" />
-          <span className="text-sm font-medium">2 millions d'utilisateurs</span>
-        </div>
-        <div className="flex items-center gap-2 bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10 animate-fade-up" style={{ animationDelay: '0.2s' }}>
-          <Trophy className="w-5 h-5 text-primary" />
-          <span className="text-sm font-medium">Meilleure application du jour</span>
-        </div>
-        <div className="flex items-center gap-2 bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10 animate-fade-up" style={{ animationDelay: '0.3s' }}>
-          <Award className="w-5 h-5 text-primary" />
-          <span className="text-sm font-medium">Ergonomie primée</span>
-        </div>
-      </div>
       
       <div className="relative z-10 max-w-4xl mx-auto text-center">
         <div className="w-[200px] h-[200px] mx-auto mb-8 relative">

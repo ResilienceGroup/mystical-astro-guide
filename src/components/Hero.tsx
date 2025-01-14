@@ -69,7 +69,7 @@ export const Hero = () => {
           <Button
             variant="outline"
             className="text-white border-white/20 hover:bg-white/10 gap-2 w-full sm:w-auto"
-            onClick={() => window.open("https://play.google.com/store/apps/details?id=com.moonastral", "_blank")}
+            onClick={() => window.open("https://play.google.com/store/apps/details?id=com.MoonAstral.android", "_blank")}
           >
             <Store className="w-5 h-5" />
             Télécharger sur Google Play

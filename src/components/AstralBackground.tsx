@@ -14,48 +14,48 @@ export const AstralBackground = () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     containerRef.current.appendChild(renderer.domElement);
 
-    // Textures
-    const textureLoader = new THREE.TextureLoader();
-    const planet1Texture = textureLoader.load('/lovable-uploads/f5cb438d-71c3-4e83-a37b-5b0256c3a2dd.png');
-    const planet2Texture = textureLoader.load('/lovable-uploads/dc7bcc5d-2251-451b-ac9e-accf5b173dda.png');
-    const planet3Texture = textureLoader.load('/lovable-uploads/f6bb9f8d-d7dd-4020-ad00-95f1c065c32a.png');
+    // Create stars
+    const starsGeometry = new THREE.BufferGeometry();
+    const starsMaterial = new THREE.PointsMaterial({
+      color: 0xFFFFFF,
+      size: 0.1,
+      transparent: true,
+      opacity: 0.8,
+    });
 
-    // Create planets
-    const createPlanet = (texture: THREE.Texture, size: number, position: THREE.Vector3) => {
-      const geometry = new THREE.SphereGeometry(size, 32, 32);
-      const material = new THREE.MeshBasicMaterial({ 
-        map: texture,
-        transparent: true,
-        opacity: 0.7
-      });
-      const planet = new THREE.Mesh(geometry, material);
-      planet.position.copy(position);
-      return planet;
-    };
+    // Create an array of random star positions
+    const starsCount = 2000;
+    const positions = new Float32Array(starsCount * 3);
 
-    // Add planets to scene
-    const planet1 = createPlanet(planet1Texture, 2, new THREE.Vector3(-5, 3, -10));
-    const planet2 = createPlanet(planet2Texture, 1.5, new THREE.Vector3(5, -2, -8));
-    const planet3 = createPlanet(planet3Texture, 1, new THREE.Vector3(0, 4, -6));
+    for (let i = 0; i < starsCount * 3; i += 3) {
+      positions[i] = (Math.random() - 0.5) * 100;     // x
+      positions[i + 1] = (Math.random() - 0.5) * 100; // y
+      positions[i + 2] = (Math.random() - 0.5) * 100; // z
+    }
 
-    scene.add(planet1, planet2, planet3);
+    starsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const stars = new THREE.Points(starsGeometry, starsMaterial);
+    scene.add(stars);
 
     // Position camera
     camera.position.z = 5;
+
+    // Handle scroll interaction
+    let scrollY = 0;
+    window.addEventListener('scroll', () => {
+      scrollY = window.scrollY;
+    });
 
     // Animation
     const animate = () => {
       requestAnimationFrame(animate);
 
-      // Rotate planets
-      planet1.rotation.y += 0.001;
-      planet2.rotation.y += 0.002;
-      planet3.rotation.y += 0.003;
+      // Rotate stars based on scroll position
+      stars.rotation.y = scrollY * 0.0005;
+      stars.rotation.x = scrollY * 0.0002;
 
-      // Floating animation
-      planet1.position.y = 3 + Math.sin(Date.now() * 0.001) * 0.2;
-      planet2.position.y = -2 + Math.sin(Date.now() * 0.0015) * 0.15;
-      planet3.position.y = 4 + Math.sin(Date.now() * 0.002) * 0.1;
+      // Continuous rotation
+      stars.rotation.y += 0.0002;
 
       renderer.render(scene, camera);
     };
@@ -74,6 +74,7 @@ export const AstralBackground = () => {
     // Cleanup
     return () => {
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scroll', () => {});
       containerRef.current?.removeChild(renderer.domElement);
       scene.clear();
     };

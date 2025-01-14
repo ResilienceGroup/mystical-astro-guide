@@ -5,17 +5,30 @@ export const Hero = () => {
   return (
     <div className="relative min-h-screen flex items-center justify-center text-white py-20 px-4 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-[#8639F6] to-black z-0">
-        {/* Animated stars effect */}
+        {/* Animated stars background */}
         <div className="absolute inset-0" style={{
-          background: 'radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.8) 100%), url("data:image/svg+xml,%3Csvg width=\'400\' height=\'400\' viewBox=\'0 0 400 400\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'2\' cy=\'2\' r=\'1\' fill=\'%23FFFFFF\' opacity=\'0.3\'/%3E%3C/svg%3E")',
-          backgroundSize: '200px 200px'
+          background: `
+            radial-gradient(1px 1px at 20px 30px, white, rgba(0,0,0,0)),
+            radial-gradient(1px 1px at 40px 70px, white, rgba(0,0,0,0)),
+            radial-gradient(1px 1px at 50px 160px, white, rgba(0,0,0,0)),
+            radial-gradient(1px 1px at 90px 40px, white, rgba(0,0,0,0)),
+            radial-gradient(1px 1px at 130px 80px, white, rgba(0,0,0,0)),
+            radial-gradient(1px 1px at 160px 120px, white, rgba(0,0,0,0)),
+            linear-gradient(to bottom, #8639F6, black)
+          `,
+          animation: 'twinkle 5s infinite',
         }} />
         
-        {/* Purple wave effect */}
-        <div className="absolute bottom-0 left-0 right-0 h-64 opacity-30"
+        {/* Animated overlay for depth */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_0%,_rgba(0,0,0,0.6)_100%)]" />
+        
+        {/* Nebula effect */}
+        <div className="absolute inset-0 opacity-30"
           style={{
-            background: 'linear-gradient(180deg, transparent 0%, rgba(134, 57, 246, 0.2) 100%)',
-            clipPath: 'polygon(0 30%, 100% 0%, 100% 100%, 0% 100%)'
+            background: `
+              radial-gradient(circle at 20% 30%, rgba(134, 57, 246, 0.4) 0%, transparent 50%),
+              radial-gradient(circle at 80% 70%, rgba(134, 57, 246, 0.3) 0%, transparent 40%)
+            `
           }}
         />
       </div>

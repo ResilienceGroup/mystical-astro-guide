@@ -68,10 +68,19 @@ export default {
             opacity: "1",
           },
         },
+        "twinkle": {
+          "0%, 100%": {
+            opacity: "1",
+          },
+          "50%": {
+            opacity: "0.3",
+          },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.5s ease-out",
         "fade-in": "fade-in 0.5s ease-out",
+        "twinkle": "twinkle 5s ease-in-out infinite",
       },
     },
   },

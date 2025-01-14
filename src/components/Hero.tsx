@@ -6,7 +6,7 @@ export const Hero = () => {
     <div className="relative min-h-screen flex items-center justify-center text-white py-20 px-4">
       <div className="absolute inset-0 bg-black z-0" />
       <div className="relative z-10 max-w-4xl mx-auto text-center">
-        <div className="w-24 h-24 mx-auto mb-8 relative">
+        <div className="w-32 h-32 mx-auto mb-8 relative">
           <img
             src="/lovable-uploads/d2b5a1fa-0ba1-415e-a3e0-529f797b02df.png"
             alt="Moon Astral"

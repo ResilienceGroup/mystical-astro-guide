@@ -1,3 +1,5 @@
+import { Users, Trophy, Award } from "lucide-react";
+
 export const Features = () => {
   const features = [
     {

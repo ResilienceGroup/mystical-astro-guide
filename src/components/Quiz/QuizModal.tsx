@@ -74,6 +74,18 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
   const triggerZapierWebhook = async () => {
     if (step === 4) {
       try {
+        // Créer un rapport vide pour obtenir un ID
+        const { data: reportData, error: reportError } = await supabase
+          .from('reports')
+          .insert({
+            profile_id: quizData.profileId,
+            content: {} // Contenu vide initial
+          })
+          .select()
+          .single();
+
+        if (reportError) throw reportError;
+
         const webhookUrl = "https://hooks.zapier.com/hooks/catch/20720574/2kofa3u/";
         const response = await fetch(webhookUrl, {
           method: "POST",
@@ -85,7 +97,8 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
             birthDate: quizData.birthDate,
             birthPlace: quizData.birthPlace,
             birthTime: quizData.birthTime,
-            profileId: quizData.profileId
+            profileId: quizData.profileId,
+            reportId: reportData.id // Inclure l'ID du rapport
           }),
         });
 

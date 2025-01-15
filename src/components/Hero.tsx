@@ -1,7 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { Apple, Store, Award, Users, Trophy } from "lucide-react";
+import { Apple, Store } from "lucide-react";
+import { useState } from "react";
+import { QuizModal } from "./Quiz/QuizModal";
 
 export const Hero = () => {
+  const [quizOpen, setQuizOpen] = useState(false);
+
   return (
     <div className="relative min-h-screen flex items-center justify-center text-white py-20 px-4 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-[#8639F6] to-black z-0">
@@ -52,7 +56,7 @@ export const Hero = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
           <Button
             className="bg-primary hover:bg-primary/90 text-white px-8 py-6 text-lg rounded-full w-full sm:w-auto"
-            onClick={() => window.location.href = "https://app.moon-astral.com"}
+            onClick={() => setQuizOpen(true)}
           >
             Obtenir ta prédiction personnalisée
           </Button>
@@ -76,6 +80,8 @@ export const Hero = () => {
           </Button>
         </div>
       </div>
+
+      <QuizModal open={quizOpen} onOpenChange={setQuizOpen} />
     </div>
   );
 };

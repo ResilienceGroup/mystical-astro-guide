@@ -145,22 +145,7 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
           <div className="relative bg-gradient-to-b from-black/80 to-black/95 rounded-lg p-6 space-y-6">
             <div className="text-center space-y-4">
               <h2 className="font-display text-2xl">Ton Rapport Personnalisé est Prêt !</h2>
-              <p className="text-gray-300">Entre ton email pour recevoir ton analyse astrologique détaillée</p>
-            </div>
-
-            <div className="grid grid-cols-3 gap-4 mb-6">
-              <div className="text-center p-4 bg-white/5 rounded-lg">
-                <div className="text-lg font-bold text-white">2M+</div>
-                <div className="text-sm text-white/60">Utilisateurs</div>
-              </div>
-              <div className="text-center p-4 bg-white/5 rounded-lg">
-                <div className="text-lg font-bold text-white">4.8/5</div>
-                <div className="text-sm text-white/60">Note App Store</div>
-              </div>
-              <div className="text-center p-4 bg-white/5 rounded-lg">
-                <div className="text-lg font-bold text-white">100%</div>
-                <div className="text-sm text-white/60">Sécurisé</div>
-              </div>
+              <p className="text-gray-300">Comme 2M d'utilisateurs, rentre ton email pour recevoir ton analyse astrologique détaillée</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">

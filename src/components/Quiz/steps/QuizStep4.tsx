@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { QuizData } from "../QuizModal";
+import { QuizData } from "../types/quiz";
 
 interface QuizStep4Props {
   onNext: () => void;

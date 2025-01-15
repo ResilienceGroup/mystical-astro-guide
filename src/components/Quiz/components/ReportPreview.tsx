@@ -1,4 +1,4 @@
-import { QuizData } from "../QuizModal";
+import { QuizData } from "../types/quiz";
 
 interface ReportPreviewProps {
   data: QuizData;

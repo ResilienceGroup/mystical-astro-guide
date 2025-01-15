@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { QuizData } from "@/pages/Quiz";
+import { QuizData } from "../types/quiz";
 
 interface QuizStep1Props {
   onNext: () => void;

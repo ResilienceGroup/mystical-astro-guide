@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { QuizData } from "../QuizModal";
+import { QuizData } from "../types/quiz";
 import { zodiac } from "@/lib/zodiac";
 import { useState } from "react";
 import { isValid } from "date-fns";

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { QuizData } from "../QuizModal";
+import { QuizData } from "../types/quiz";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { EmailForm } from "../components/EmailForm";

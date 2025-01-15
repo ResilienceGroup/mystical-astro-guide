@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { QuizData } from "../QuizModal";
+import { QuizData } from "../types/quiz";
 import { useState } from "react";
 
 interface QuizStep7Props {

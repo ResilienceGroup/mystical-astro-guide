@@ -38,16 +38,14 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
           }),
         });
 
-        toast({
-          title: "Demande envoyée",
-          description: "Ton rapport est en cours de génération...",
+        toast("Demande envoyée", {
+          description: "Ton rapport est en cours de génération..."
         });
       } catch (error) {
         console.error("Error sending data to webhook:", error);
-        toast({
-          title: "Erreur",
+        toast("Erreur", {
           description: "Une erreur est survenue lors de l'envoi des données",
-          variant: "destructive",
+          style: { background: 'red', color: 'white' }
         });
       }
     }

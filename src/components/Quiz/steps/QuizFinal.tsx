@@ -12,6 +12,7 @@ interface QuizFinalProps {
 export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
   const [email, setEmail] = useState("");
   const [webhookUrl, setWebhookUrl] = useState("");
+  const [reportData, setReportData] = useState(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,13 +35,33 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
             relationshipStatus: data.relationshipStatus,
             element: data.element,
             goals: data.goals,
-            email: email
+            email: email,
+            callbackUrl: `${window.location.origin}/api/report` // URL où Zapier enverra les résultats
           }),
         });
 
         toast("Demande envoyée", {
           description: "Ton rapport est en cours de génération..."
         });
+
+        // Simulate receiving report data (in real scenario, this would come from your backend)
+        // This is just for demonstration - in reality, you'd need a backend server to receive the webhook from Zapier
+        const simulatedReportData = {
+          title: "Analyse Astrologique Personnalisée",
+          sections: [
+            {
+              title: "Profil Astrologique",
+              content: `Analyse pour ${data.name}, né(e) le ${data.birthDate?.toLocaleDateString()} à ${data.birthTime} à ${data.birthPlace}`
+            },
+            {
+              title: "Prévisions",
+              content: "Vos prévisions personnalisées seront bientôt disponibles..."
+            }
+          ]
+        };
+        
+        setReportData(simulatedReportData);
+
       } catch (error) {
         console.error("Error sending data to webhook:", error);
         toast("Erreur", {
@@ -86,36 +107,57 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
         </Button>
       </form>
 
-      <div className="relative mt-8 p-6 bg-white/5 rounded-lg">
-        <div className="absolute inset-0 backdrop-blur-md bg-black/30 rounded-lg" />
-        <div className="relative space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="font-display text-xl">Analyse Astrale Personnalisée</h3>
-            <span className="text-primary">✨</span>
-          </div>
-          
-          <div className="space-y-3">
-            <div className="h-4 bg-white/20 rounded w-3/4" />
-            <div className="h-4 bg-white/20 rounded w-1/2" />
-            <div className="h-4 bg-white/20 rounded w-5/6" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 mt-6">
-            <div className="space-y-2">
-              <div className="h-8 bg-white/20 rounded" />
-              <div className="h-4 bg-white/20 rounded w-2/3" />
+      {reportData && (
+        <div className="relative mt-8 p-6 bg-white/5 rounded-lg">
+          <div className="absolute inset-0 backdrop-blur-md bg-black/30 rounded-lg" />
+          <div className="relative space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-display text-xl">{reportData.title}</h3>
+              <span className="text-primary">✨</span>
             </div>
-            <div className="space-y-2">
-              <div className="h-8 bg-white/20 rounded" />
-              <div className="h-4 bg-white/20 rounded w-2/3" />
-            </div>
-          </div>
-
-          <div className="mt-6 p-4 bg-primary/10 rounded-lg">
-            <div className="h-4 bg-white/20 rounded w-1/3" />
+            
+            {reportData.sections.map((section, index) => (
+              <div key={index} className="space-y-2">
+                <h4 className="font-semibold">{section.title}</h4>
+                <p className="text-gray-300">{section.content}</p>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
+      )}
+
+      {!reportData && (
+        <div className="relative mt-8 p-6 bg-white/5 rounded-lg">
+          <div className="absolute inset-0 backdrop-blur-md bg-black/30 rounded-lg" />
+          <div className="relative space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-display text-xl">Analyse Astrale Personnalisée</h3>
+              <span className="text-primary">✨</span>
+            </div>
+            
+            <div className="space-y-3">
+              <div className="h-4 bg-white/20 rounded w-3/4" />
+              <div className="h-4 bg-white/20 rounded w-1/2" />
+              <div className="h-4 bg-white/20 rounded w-5/6" />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 mt-6">
+              <div className="space-y-2">
+                <div className="h-8 bg-white/20 rounded" />
+                <div className="h-4 bg-white/20 rounded w-2/3" />
+              </div>
+              <div className="space-y-2">
+                <div className="h-8 bg-white/20 rounded" />
+                <div className="h-4 bg-white/20 rounded w-2/3" />
+              </div>
+            </div>
+
+            <div className="mt-6 p-4 bg-primary/10 rounded-lg">
+              <div className="h-4 bg-white/20 rounded w-1/3" />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

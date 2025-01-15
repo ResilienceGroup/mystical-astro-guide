@@ -35,6 +35,7 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
 
   const createProfile = async (name: string) => {
     try {
+      console.log('Creating profile with name:', name);
       const { data, error } = await supabase
         .from('profiles')
         .insert([{ name }])
@@ -42,7 +43,7 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
         .single();
 
       if (error) throw error;
-      console.log('Profile created:', data);
+      console.log('Profile created successfully:', data);
       return data.id;
     } catch (error) {
       console.error('Error creating profile:', error);
@@ -53,20 +54,45 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
 
   const updateQuizResponse = async (profileId: string, data: Partial<QuizData>) => {
     try {
-      console.log('Updating quiz response:', { profileId, data });
-      const { error } = await supabase
+      console.log('Updating quiz response for profile:', profileId, 'with data:', data);
+      
+      // First, check if a response exists
+      const { data: existingResponse } = await supabase
         .from('quiz_responses')
-        .upsert({
-          profile_id: profileId,
-          birth_place: data.birthPlace,
-          birth_date: data.birthDate?.toISOString(),
-          birth_time: data.birthTime,
-          relationship_status: data.relationshipStatus,
-          element: data.element,
-          goals: data.goals,
-        });
+        .select()
+        .eq('profile_id', profileId)
+        .single();
 
-      if (error) throw error;
+      let result;
+      if (existingResponse) {
+        // Update existing response
+        result = await supabase
+          .from('quiz_responses')
+          .update({
+            birth_place: data.birthPlace,
+            birth_date: data.birthDate?.toISOString(),
+            birth_time: data.birthTime,
+            relationship_status: data.relationshipStatus,
+            element: data.element,
+            goals: data.goals,
+          })
+          .eq('profile_id', profileId);
+      } else {
+        // Insert new response
+        result = await supabase
+          .from('quiz_responses')
+          .insert({
+            profile_id: profileId,
+            birth_place: data.birthPlace,
+            birth_date: data.birthDate?.toISOString(),
+            birth_time: data.birthTime,
+            relationship_status: data.relationshipStatus,
+            element: data.element,
+            goals: data.goals,
+          });
+      }
+
+      if (result.error) throw result.error;
       console.log('Quiz response updated successfully');
     } catch (error) {
       console.error('Error updating quiz response:', error);
@@ -147,6 +173,7 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
   };
 
   const updateQuizData = async (data: Partial<QuizData>) => {
+    console.log('Updating quiz data with:', data);
     const updatedData = { ...quizData, ...data };
     setQuizData(updatedData);
 
@@ -154,13 +181,15 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
     if (data.name && !quizData.profileId) {
       const profileId = await createProfile(data.name);
       if (profileId) {
+        console.log('Created new profile with ID:', profileId);
         const newData = { ...updatedData, profileId };
         setQuizData(newData);
         await updateQuizResponse(profileId, newData);
       }
     } 
-    // Update quiz responses for existing profile if we have a profileId
+    // Update quiz responses for existing profile
     else if (quizData.profileId) {
+      console.log('Updating existing profile:', quizData.profileId);
       await updateQuizResponse(quizData.profileId, updatedData);
     }
   };

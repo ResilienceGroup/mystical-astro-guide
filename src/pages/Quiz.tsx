@@ -4,11 +4,11 @@ import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { QuizStep1 } from "@/components/Quiz/steps/QuizStep1";
 import { QuizStep2 } from "@/components/Quiz/steps/QuizStep2";
+import { QuizStep6 } from "@/components/Quiz/steps/QuizStep6";
+import { QuizStep7 } from "@/components/Quiz/steps/QuizStep7";
 import { QuizStep3 } from "@/components/Quiz/steps/QuizStep3";
 import { QuizStep4 } from "@/components/Quiz/steps/QuizStep4";
 import { QuizStep5 } from "@/components/Quiz/steps/QuizStep5";
-import { QuizStep6 } from "@/components/Quiz/steps/QuizStep6";
-import { QuizStep7 } from "@/components/Quiz/steps/QuizStep7";
 import { QuizFinal } from "@/components/Quiz/steps/QuizFinal";
 import { LoadingStep } from "@/components/Quiz/steps/LoadingStep";
 import { useNavigate } from "react-router-dom";
@@ -34,7 +34,7 @@ const Quiz = () => {
   const progress = (step / totalSteps) * 100;
 
   const handleNext = () => {
-    if (step === 5) {
+    if (step === 7) {
       setShowLoader(true);
       return;
     }
@@ -55,7 +55,7 @@ const Quiz = () => {
 
   const handleLoaderComplete = () => {
     setShowLoader(false);
-    setStep(6);
+    setStep(8);
   };
 
   const updateQuizData = (data: Partial<QuizData>) => {
@@ -105,11 +105,11 @@ const Quiz = () => {
             <>
               {step === 1 && <QuizStep1 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
               {step === 2 && <QuizStep2 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
-              {step === 3 && <QuizStep3 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
-              {step === 4 && <QuizStep4 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
-              {step === 5 && <QuizStep5 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
-              {step === 6 && <QuizStep6 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
-              {step === 7 && <QuizStep7 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
+              {step === 3 && <QuizStep6 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
+              {step === 4 && <QuizStep7 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
+              {step === 5 && <QuizStep3 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
+              {step === 6 && <QuizStep4 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
+              {step === 7 && <QuizStep5 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
               {step === 8 && <QuizFinal onDataUpdate={updateQuizData} data={quizData} />}
             </>
           )}

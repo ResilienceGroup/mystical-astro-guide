@@ -24,16 +24,30 @@ export type QuizData = {
 export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) => {
   const [step, setStep] = useState(1);
   const [quizData, setQuizData] = useState<QuizData>({});
+  const [showLoader, setShowLoader] = useState(false);
   
-  const totalSteps = 6;
+  const totalSteps = 8; // Updated total steps
   const progress = (step / totalSteps) * 100;
 
   const handleNext = () => {
+    if (step === 5) {
+      setShowLoader(true);
+      return;
+    }
     setStep(prev => Math.min(prev + 1, totalSteps));
   };
 
   const handleBack = () => {
+    if (showLoader) {
+      setShowLoader(false);
+      return;
+    }
     setStep(prev => Math.max(prev - 1, 1));
+  };
+
+  const handleLoaderComplete = () => {
+    setShowLoader(false);
+    setStep(6);
   };
 
   const updateQuizData = (data: Partial<QuizData>) => {
@@ -80,12 +94,20 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
 
             {/* Quiz Steps */}
             <div className="space-y-6">
-              {step === 1 && <QuizStep1 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
-              {step === 2 && <QuizStep2 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
-              {step === 3 && <QuizStep3 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
-              {step === 4 && <QuizStep4 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
-              {step === 5 && <QuizStep5 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
-              {step === 6 && <QuizFinal onDataUpdate={updateQuizData} data={quizData} />}
+              {showLoader ? (
+                <LoadingStep onComplete={handleLoaderComplete} />
+              ) : (
+                <>
+                  {step === 1 && <QuizStep1 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
+                  {step === 2 && <QuizStep2 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
+                  {step === 3 && <QuizStep3 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
+                  {step === 4 && <QuizStep4 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
+                  {step === 5 && <QuizStep5 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
+                  {step === 6 && <QuizStep6 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
+                  {step === 7 && <QuizStep7 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
+                  {step === 8 && <QuizFinal onDataUpdate={updateQuizData} data={quizData} />}
+                </>
+              )}
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { QuizData } from "../QuizModal";
-import { Heart, HeartPulse, Laugh, SmilePlus, Frown, Meh } from "lucide-react";
+import { Heart, HeartPulse, SmilePlus, Laugh, Meh, Frown } from "lucide-react";
 
 interface QuizStep3Props {
   onNext: () => void;
@@ -15,18 +15,18 @@ export const QuizStep3 = ({ onNext, onDataUpdate, data }: QuizStep3Props) => {
   };
 
   const statuses = [
-    { label: "En couple", value: "relationship", icon: Heart },
-    { label: "Je viens de rompre", value: "broke_up", icon: HeartPulse },
-    { label: "Fiancé(e)", value: "engaged", icon: SmilePlus },
-    { label: "Marié(e)", value: "married", icon: Laugh },
-    { label: "À la recherche de l'âme sœur", value: "looking", icon: Meh },
-    { label: "C'est compliqué", value: "complicated", icon: Frown },
+    { label: "En couple 💑", value: "relationship", icon: Heart },
+    { label: "Je viens de rompre 💔", value: "broke_up", icon: HeartPulse },
+    { label: "Fiancé(e) 💍", value: "engaged", icon: SmilePlus },
+    { label: "Marié(e) 👰", value: "married", icon: Laugh },
+    { label: "À la recherche de l'âme sœur ✨", value: "looking", icon: Meh },
+    { label: "C'est compliqué 🤔", value: "complicated", icon: Frown },
   ];
 
   return (
     <div className="space-y-6">
       <div className="text-center space-y-4">
-        <h2 className="font-display text-2xl">Pour commencer, parle-nous de ta situation amoureuse</h2>
+        <h2 className="font-display text-2xl">Pour commencer, parle-nous de ta situation amoureuse 💘</h2>
       </div>
 
       <div className="space-y-3">

@@ -8,7 +8,10 @@ import { QuizStep2 } from "./steps/QuizStep2";
 import { QuizStep3 } from "./steps/QuizStep3";
 import { QuizStep4 } from "./steps/QuizStep4";
 import { QuizStep5 } from "./steps/QuizStep5";
+import { QuizStep6 } from "./steps/QuizStep6";
+import { QuizStep7 } from "./steps/QuizStep7";
 import { QuizFinal } from "./steps/QuizFinal";
+import { LoadingStep } from "./steps/LoadingStep";
 
 export type QuizData = {
   name?: string;

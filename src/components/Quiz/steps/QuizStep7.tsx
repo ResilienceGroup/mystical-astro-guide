@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { QuizData } from "../QuizModal";
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
 
 interface QuizStep7Props {
   onNext: () => void;
@@ -12,45 +11,12 @@ interface QuizStep7Props {
 
 export const QuizStep7 = ({ onNext, onDataUpdate, data }: QuizStep7Props) => {
   const [birthPlace, setBirthPlace] = useState(data.birthPlace || "");
-  const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!birthPlace) return;
-
-    setIsLoading(true);
-    
-    try {
-      const response = await fetch("https://hooks.zapier.com/hooks/catch/20720574/2kofa3u/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: data.name,
-          birthDate: data.birthDate?.toISOString(),
-          birthTime: data.birthTime,
-          birthPlace: birthPlace,
-          // Add any other collected fields here
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to send data to Zapier");
-      }
-
+    if (birthPlace) {
       onDataUpdate({ birthPlace });
       onNext();
-    } catch (error) {
-      console.error("Error sending data to Zapier:", error);
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de l'envoi des données. Veuillez réessayer.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -75,9 +41,9 @@ export const QuizStep7 = ({ onNext, onDataUpdate, data }: QuizStep7Props) => {
       <Button
         type="submit"
         className="w-full bg-primary hover:bg-primary/90"
-        disabled={!birthPlace || isLoading}
+        disabled={!birthPlace}
       >
-        {isLoading ? "Chargement..." : "Continuer"}
+        Continuer
       </Button>
     </form>
   );

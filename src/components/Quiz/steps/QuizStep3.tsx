@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { QuizData } from "../QuizModal";
-import { Heart, HeartPulse, SmilePlus, Laugh, Meh, Frown } from "lucide-react";
 
 interface QuizStep3Props {
   onNext: () => void;
@@ -15,12 +14,12 @@ export const QuizStep3 = ({ onNext, onDataUpdate, data }: QuizStep3Props) => {
   };
 
   const statuses = [
-    { label: "En couple 💑", value: "relationship", icon: Heart },
-    { label: "Je viens de rompre 💔", value: "broke_up", icon: HeartPulse },
-    { label: "Fiancé(e) 💍", value: "engaged", icon: SmilePlus },
-    { label: "Marié(e) 👰", value: "married", icon: Laugh },
-    { label: "À la recherche de l'âme sœur ✨", value: "looking", icon: Meh },
-    { label: "C'est compliqué 🤔", value: "complicated", icon: Frown },
+    { label: "En couple", value: "relationship", emoji: "💑" },
+    { label: "Je viens de rompre", value: "broke_up", emoji: "💔" },
+    { label: "Fiancé(e)", value: "engaged", emoji: "💍" },
+    { label: "Marié(e)", value: "married", emoji: "👰" },
+    { label: "À la recherche de l'âme sœur", value: "looking", emoji: "✨" },
+    { label: "C'est compliqué", value: "complicated", emoji: "🤔" },
   ];
 
   return (
@@ -30,20 +29,17 @@ export const QuizStep3 = ({ onNext, onDataUpdate, data }: QuizStep3Props) => {
       </div>
 
       <div className="space-y-3">
-        {statuses.map((status) => {
-          const Icon = status.icon;
-          return (
-            <Button
-              key={status.value}
-              variant="outline"
-              className="w-full text-white border-white/20 hover:bg-white/10 justify-start text-left h-auto py-4"
-              onClick={() => handleSelect(status.value)}
-            >
-              <Icon className="mr-2 h-5 w-5" />
-              {status.label}
-            </Button>
-          );
-        })}
+        {statuses.map((status) => (
+          <Button
+            key={status.value}
+            variant="outline"
+            className="w-full text-white border-white/20 hover:bg-white/10 justify-start text-left h-auto py-4"
+            onClick={() => handleSelect(status.value)}
+          >
+            <span className="mr-2">{status.emoji}</span>
+            {status.label}
+          </Button>
+        ))}
       </div>
     </div>
   );

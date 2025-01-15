@@ -7,7 +7,10 @@ import { QuizStep2 } from "@/components/Quiz/steps/QuizStep2";
 import { QuizStep3 } from "@/components/Quiz/steps/QuizStep3";
 import { QuizStep4 } from "@/components/Quiz/steps/QuizStep4";
 import { QuizStep5 } from "@/components/Quiz/steps/QuizStep5";
+import { QuizStep6 } from "@/components/Quiz/steps/QuizStep6";
+import { QuizStep7 } from "@/components/Quiz/steps/QuizStep7";
 import { QuizFinal } from "@/components/Quiz/steps/QuizFinal";
+import { LoadingStep } from "@/components/Quiz/steps/LoadingStep";
 import { useNavigate } from "react-router-dom";
 
 export type QuizData = {
@@ -24,21 +27,35 @@ export type QuizData = {
 const Quiz = () => {
   const [step, setStep] = useState(1);
   const [quizData, setQuizData] = useState<QuizData>({});
+  const [showLoader, setShowLoader] = useState(false);
   const navigate = useNavigate();
   
-  const totalSteps = 6;
+  const totalSteps = 8;
   const progress = (step / totalSteps) * 100;
 
   const handleNext = () => {
+    if (step === 5) {
+      setShowLoader(true);
+      return;
+    }
     setStep(prev => Math.min(prev + 1, totalSteps));
   };
 
   const handleBack = () => {
+    if (showLoader) {
+      setShowLoader(false);
+      return;
+    }
     if (step === 1) {
       navigate('/');
       return;
     }
     setStep(prev => Math.max(prev - 1, 1));
+  };
+
+  const handleLoaderComplete = () => {
+    setShowLoader(false);
+    setStep(6);
   };
 
   const updateQuizData = (data: Partial<QuizData>) => {
@@ -81,13 +98,21 @@ const Quiz = () => {
         </div>
 
         {/* Quiz Steps */}
-        <div className="flex-1 flex flex-col">
-          {step === 1 && <QuizStep1 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
-          {step === 2 && <QuizStep2 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
-          {step === 3 && <QuizStep3 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
-          {step === 4 && <QuizStep4 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
-          {step === 5 && <QuizStep5 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
-          {step === 6 && <QuizFinal onDataUpdate={updateQuizData} data={quizData} />}
+        <div className="flex-1 flex flex-col text-white">
+          {showLoader ? (
+            <LoadingStep onComplete={handleLoaderComplete} />
+          ) : (
+            <>
+              {step === 1 && <QuizStep1 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
+              {step === 2 && <QuizStep2 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
+              {step === 3 && <QuizStep3 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
+              {step === 4 && <QuizStep4 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
+              {step === 5 && <QuizStep5 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
+              {step === 6 && <QuizStep6 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
+              {step === 7 && <QuizStep7 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
+              {step === 8 && <QuizFinal onDataUpdate={updateQuizData} data={quizData} />}
+            </>
+          )}
         </div>
       </div>
     </div>

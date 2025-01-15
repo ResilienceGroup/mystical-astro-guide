@@ -12,10 +12,11 @@ interface QuizStep1Props {
 export const QuizStep1 = ({ onNext, onDataUpdate, data }: QuizStep1Props) => {
   const [name, setName] = useState(data.name || "");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
-      onDataUpdate({ name });
+      console.log('QuizStep1: Submitting name:', name);
+      await onDataUpdate({ name });
       onNext();
     }
   };

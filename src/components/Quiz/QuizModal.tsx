@@ -42,7 +42,11 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error details:', error);
+        throw error;
+      }
+      
       console.log('Profile created successfully:', data);
       return data.id;
     } catch (error) {
@@ -175,22 +179,31 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
   const updateQuizData = async (data: Partial<QuizData>) => {
     console.log('Updating quiz data with:', data);
     const updatedData = { ...quizData, ...data };
-    setQuizData(updatedData);
 
-    // If name is being set, create a new profile
+    // If name is being set, create a new profile first
     if (data.name && !quizData.profileId) {
+      console.log('Creating new profile for name:', data.name);
       const profileId = await createProfile(data.name);
+      
       if (profileId) {
         console.log('Created new profile with ID:', profileId);
         const newData = { ...updatedData, profileId };
         setQuizData(newData);
         await updateQuizResponse(profileId, newData);
+      } else {
+        console.error('Failed to create profile');
+        return;
       }
     } 
     // Update quiz responses for existing profile
     else if (quizData.profileId) {
       console.log('Updating existing profile:', quizData.profileId);
+      setQuizData(updatedData);
       await updateQuizResponse(quizData.profileId, updatedData);
+    } else {
+      // Just update the local state if we don't have a profile yet
+      console.log('Updating local state only (no profile yet)');
+      setQuizData(updatedData);
     }
   };
 

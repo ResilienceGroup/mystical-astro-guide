@@ -3,7 +3,6 @@ import { QuizData } from "../types/quiz";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { EmailForm } from "../components/EmailForm";
-import { ReportPreview } from "../components/ReportPreview";
 import { ReportSection } from "../components/ReportSection";
 import { ReportSection as ReportSectionType, isJsonCompatible } from "../types/report";
 
@@ -19,25 +18,30 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
   const generateReportData = (name: string): ReportSectionType[] => {
     return [
       {
-        title: "La profondeur sous le masque",
-        content: `${name}, en tant que Scorpion, tes expériences passées t'ont forgé un caractère fort et résilient. Tu possèdes une capacité unique à explorer les profondeurs de ton être et à transformer les défis en opportunités. Ton intuition aiguë et ton sens de la détermination t'aident à naviguer à travers les complexités de la vie.`,
-        planetPosition: "Basé sur ton Soleil en Scorpion, ta Lune en Scorpion et ton Ascendant inconnu."
+        title: "Ton Analyse Personnelle",
+        content: `${name}, voici ton analyse astrologique basée sur ta date de naissance. Les aspects planétaires révèlent une période intéressante pour ton développement personnel et tes relations.`,
+        planetPosition: "Soleil en Scorpion, Lune en Balance"
       },
       {
-        title: "Hiver - Paix intérieure et introspection",
-        content: `${name}, cet hiver, tes valeurs fondamentales seront mises à l'épreuve. Le moment est idéal pour réfléchir à ce qui est vraiment important pour toi et peut-être apporter les changements nécessaires pour te sentir aligné avec tes véritables aspirations.`,
-        planetPosition: "Durant cette saison, Neptune forme un trigone avec ton Soleil natal.",
+        title: "Opportunités à Venir",
+        content: "Les prochains mois seront particulièrement favorables pour ton développement professionnel. Jupiter en transit dans ta maison des opportunités ouvre de nouvelles portes.",
         dates: [
           {
             period: "15 JAN — 22 JAN",
-            focus: "Recul nécessaire",
-            category: "ÉMOTIONS",
-            description: "Tu pourrais sentir une certaine lourdeur émotionnelle pendant cette période. Prends le temps d'analyser cette sensation.",
-            planetaryInfo: "À cette période, la Lune forme un carré à ton Saturne natal."
+            focus: "Période clé",
+            category: "CARRIÈRE",
+            description: "Une opportunité professionnelle importante se présente. Reste attentif aux signes.",
+            planetaryInfo: "Jupiter en trigone avec ton Soleil natal"
           }
         ],
         isBlurred: true
       },
+      {
+        title: "Amour et Relations",
+        content: "Vénus influence positivement ta sphère relationnelle. C'est le moment idéal pour approfondir tes relations existantes ou faire de nouvelles rencontres significatives.",
+        planetPosition: "Vénus en Taureau",
+        isBlurred: true
+      }
     ];
   };
 
@@ -45,7 +49,6 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
     e.preventDefault();
     if (email && data.profileId) {
       try {
-        // Update profile with email
         const { error: profileError } = await supabase
           .from('profiles')
           .update({ email })
@@ -53,10 +56,8 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
 
         if (profileError) throw profileError;
         
-        // Generate and store report
         const reportContent = generateReportData(data.name || '');
         
-        // Validate that the content is JSON compatible
         if (!isJsonCompatible(reportContent)) {
           throw new Error("Report content is not JSON compatible");
         }
@@ -90,13 +91,14 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
             setEmail={setEmail}
             onSubmit={handleSubmit}
           />
-          <ReportPreview data={data} />
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="text-center">
-            <h2 className="font-display text-3xl mb-2">Ton Analyse Astrologique</h2>
-            <p className="text-white/60">Basée sur ta date de naissance et tes réponses</p>
+          <div className="text-center space-y-4">
+            <h2 className="font-display text-3xl">Ton Analyse Astrologique</h2>
+            <p className="text-white/60">
+              Basée sur ta date de naissance et tes réponses
+            </p>
           </div>
           
           {reportData.map((section, index) => (

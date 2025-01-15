@@ -43,15 +43,15 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
         .single();
 
       if (error) {
-        console.error('Error details:', error);
+        console.error('Error creating profile:', error);
+        toast.error("Une erreur est survenue lors de la création du profil");
         throw error;
       }
       
       console.log('Profile created successfully:', data);
       return data.id;
     } catch (error) {
-      console.error('Error creating profile:', error);
-      toast.error("Une erreur est survenue lors de la création du profil");
+      console.error('Error in createProfile:', error);
       return null;
     }
   };
@@ -60,7 +60,6 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
     try {
       console.log('Updating quiz response for profile:', profileId, 'with data:', data);
       
-      // First, check if a response exists
       const { data: existingResponse } = await supabase
         .from('quiz_responses')
         .select()
@@ -69,7 +68,6 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
 
       let result;
       if (existingResponse) {
-        // Update existing response
         result = await supabase
           .from('quiz_responses')
           .update({
@@ -82,7 +80,6 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
           })
           .eq('profile_id', profileId);
       } else {
-        // Insert new response
         result = await supabase
           .from('quiz_responses')
           .insert({
@@ -96,23 +93,26 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
           });
       }
 
-      if (result.error) throw result.error;
+      if (result.error) {
+        console.error('Error updating quiz response:', result.error);
+        toast.error("Une erreur est survenue lors de l'enregistrement des réponses");
+        throw result.error;
+      }
+      
       console.log('Quiz response updated successfully');
     } catch (error) {
-      console.error('Error updating quiz response:', error);
-      toast.error("Une erreur est survenue lors de l'enregistrement des réponses");
+      console.error('Error in updateQuizResponse:', error);
     }
   };
 
   const triggerZapierWebhook = async () => {
     if (step === 4) {
       try {
-        // Créer un rapport vide pour obtenir un ID
         const { data: reportData, error: reportError } = await supabase
           .from('reports')
           .insert({
             profile_id: quizData.profileId,
-            content: {} // Contenu vide initial
+            content: {}
           })
           .select()
           .single();
@@ -157,7 +157,6 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
     const nextStep = Math.min(step + 1, totalSteps);
     setStep(nextStep);
     
-    // Trigger Zapier webhook after step 4
     if (step === 4) {
       await triggerZapierWebhook();
     }
@@ -178,16 +177,15 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
 
   const updateQuizData = async (data: Partial<QuizData>) => {
     console.log('Updating quiz data with:', data);
-    const updatedData = { ...quizData, ...data };
-
-    // If name is being set, create a new profile first
+    
+    // If name is being set (first step), create a new profile
     if (data.name && !quizData.profileId) {
       console.log('Creating new profile for name:', data.name);
       const profileId = await createProfile(data.name);
       
       if (profileId) {
-        console.log('Created new profile with ID:', profileId);
-        const newData = { ...updatedData, profileId };
+        console.log('Created profile with ID:', profileId);
+        const newData = { ...quizData, ...data, profileId };
         setQuizData(newData);
         await updateQuizResponse(profileId, newData);
       } else {
@@ -195,15 +193,17 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
         return;
       }
     } 
-    // Update quiz responses for existing profile
+    // For subsequent steps, update quiz response if we have a profile
     else if (quizData.profileId) {
       console.log('Updating existing profile:', quizData.profileId);
-      setQuizData(updatedData);
-      await updateQuizResponse(quizData.profileId, updatedData);
-    } else {
-      // Just update the local state if we don't have a profile yet
-      console.log('Updating local state only (no profile yet)');
-      setQuizData(updatedData);
+      const newData = { ...quizData, ...data };
+      setQuizData(newData);
+      await updateQuizResponse(quizData.profileId, newData);
+    }
+    // Just update local state if we don't have a profile yet (shouldn't happen)
+    else {
+      console.log('Updating local state only');
+      setQuizData(prev => ({ ...prev, ...data }));
     }
   };
 

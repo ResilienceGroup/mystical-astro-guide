@@ -29,7 +29,7 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
   const [quizData, setQuizData] = useState<QuizData>({});
   const [showLoader, setShowLoader] = useState(false);
   
-  const totalSteps = 8; // Updated total steps
+  const totalSteps = 8;
   const progress = (step / totalSteps) * 100;
 
   const handleNext = () => {

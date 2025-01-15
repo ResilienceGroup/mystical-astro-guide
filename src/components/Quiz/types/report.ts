@@ -13,3 +13,22 @@ export interface ReportSection {
   planetPosition?: string;
   isBlurred?: boolean;
 }
+
+// Type guard to ensure JSON compatibility
+export const isJsonCompatible = (value: unknown): value is Json => {
+  try {
+    JSON.stringify(value);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+// Type for our database
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json }
+  | Json[];

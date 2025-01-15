@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { EmailForm } from "../components/EmailForm";
 import { ReportPreview } from "../components/ReportPreview";
 import { ReportSection } from "../components/ReportSection";
-import { ReportSection as ReportSectionType } from "../types/report";
+import { ReportSection as ReportSectionType, isJsonCompatible } from "../types/report";
 
 interface QuizFinalProps {
   onDataUpdate: (data: Partial<QuizData>) => void;
@@ -55,12 +55,18 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
         
         // Generate and store report
         const reportContent = generateReportData(data.name || '');
+        
+        // Validate that the content is JSON compatible
+        if (!isJsonCompatible(reportContent)) {
+          throw new Error("Report content is not JSON compatible");
+        }
+
         const { error: reportError } = await supabase
           .from('reports')
-          .insert([{
+          .insert({
             profile_id: data.profileId,
             content: reportContent
-          }]);
+          });
 
         if (reportError) throw reportError;
         

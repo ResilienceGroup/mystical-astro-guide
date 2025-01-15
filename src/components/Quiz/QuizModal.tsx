@@ -42,6 +42,7 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
         .single();
 
       if (error) throw error;
+      console.log('Profile created:', data);
       return data.id;
     } catch (error) {
       console.error('Error creating profile:', error);
@@ -52,6 +53,7 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
 
   const updateQuizResponse = async (profileId: string, data: Partial<QuizData>) => {
     try {
+      console.log('Updating quiz response:', { profileId, data });
       const { error } = await supabase
         .from('quiz_responses')
         .upsert({
@@ -65,6 +67,7 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
         });
 
       if (error) throw error;
+      console.log('Quiz response updated successfully');
     } catch (error) {
       console.error('Error updating quiz response:', error);
       toast.error("Une erreur est survenue lors de l'enregistrement des réponses");
@@ -85,6 +88,7 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
           .single();
 
         if (reportError) throw reportError;
+        console.log('Empty report created:', reportData);
 
         const webhookUrl = "https://hooks.zapier.com/hooks/catch/20720574/2kofa3u/";
         const response = await fetch(webhookUrl, {
@@ -98,7 +102,7 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
             birthPlace: quizData.birthPlace,
             birthTime: quizData.birthTime,
             profileId: quizData.profileId,
-            reportId: reportData.id // Inclure l'ID du rapport
+            reportId: reportData.id
           }),
         });
 
@@ -150,11 +154,12 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
     if (data.name && !quizData.profileId) {
       const profileId = await createProfile(data.name);
       if (profileId) {
-        setQuizData(prev => ({ ...prev, profileId }));
-        await updateQuizResponse(profileId, updatedData);
+        const newData = { ...updatedData, profileId };
+        setQuizData(newData);
+        await updateQuizResponse(profileId, newData);
       }
     } 
-    // Update quiz responses for existing profile
+    // Update quiz responses for existing profile if we have a profileId
     else if (quizData.profileId) {
       await updateQuizResponse(quizData.profileId, updatedData);
     }

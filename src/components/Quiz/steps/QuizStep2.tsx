@@ -14,7 +14,7 @@ interface QuizStep2Props {
 }
 
 export const QuizStep2 = ({ onNext, onDataUpdate, data }: QuizStep2Props) => {
-  const [birthDate, setBirthDate] = useState(data.birthDate || "");
+  const [birthDate, setBirthDate] = useState<Date | null>(data.birthDate || null);
   const [zodiacSign, setZodiacSign] = useState<typeof zodiac[0] | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -49,11 +49,11 @@ export const QuizStep2 = ({ onNext, onDataUpdate, data }: QuizStep2Props) => {
   };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const date = new Date(e.target.value);
-    setBirthDate(date);
+    const newDate = new Date(e.target.value);
+    setBirthDate(newDate);
     setIsAnimating(true);
     
-    const sign = getZodiacSign(date);
+    const sign = getZodiacSign(newDate);
     setTimeout(() => {
       setZodiacSign(sign);
       setIsAnimating(false);
@@ -81,7 +81,7 @@ export const QuizStep2 = ({ onNext, onDataUpdate, data }: QuizStep2Props) => {
           <Input
             id="birthdate"
             type="date"
-            value={birthDate ? format(new Date(birthDate), "yyyy-MM-dd") : ""}
+            value={birthDate ? format(birthDate, "yyyy-MM-dd") : ""}
             onChange={handleDateChange}
             className="bg-white/10 border-white/20 text-white"
             required

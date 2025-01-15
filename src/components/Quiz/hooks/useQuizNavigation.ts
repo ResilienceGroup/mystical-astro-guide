@@ -9,7 +9,7 @@ export const useQuizNavigation = () => {
   
   const totalSteps = 8;
 
-  const triggerZapierWebhook = async (quizData: QuizData) => {
+  const generateReport = async (quizData: QuizData) => {
     if (step === 4) {
       try {
         console.log('Creating empty report for profile:', quizData.profileId);
@@ -28,8 +28,7 @@ export const useQuizNavigation = () => {
         }
         console.log('Empty report created:', reportData);
 
-        const webhookUrl = "https://hooks.zapier.com/hooks/catch/20720574/2kofa3u";
-        console.log('Triggering Zapier webhook with data:', {
+        console.log('Calling generate-report function with data:', {
           name: quizData.name,
           birthDate: quizData.birthDate,
           birthPlace: quizData.birthPlace,
@@ -38,31 +37,34 @@ export const useQuizNavigation = () => {
           reportId: reportData.id
         });
 
-        const response = await fetch(webhookUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: quizData.name,
-            birthDate: quizData.birthDate,
-            birthPlace: quizData.birthPlace,
-            birthTime: quizData.birthTime,
-            profileId: quizData.profileId,
-            reportId: reportData.id
-          }),
-        });
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-report`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+            },
+            body: JSON.stringify({
+              name: quizData.name,
+              birthDate: quizData.birthDate,
+              birthPlace: quizData.birthPlace,
+              birthTime: quizData.birthTime,
+              profileId: quizData.profileId,
+              reportId: reportData.id
+            }),
+          }
+        );
 
         if (!response.ok) {
-          console.error('Zapier webhook failed with status:', response.status);
           const responseText = await response.text();
-          console.error('Response text:', responseText);
-          throw new Error(`Failed to trigger Zapier webhook: ${response.status} ${responseText}`);
+          console.error('Generate report function failed:', response.status, responseText);
+          throw new Error(`Failed to generate report: ${response.status} ${responseText}`);
         }
 
-        console.log("Zapier webhook triggered successfully");
+        console.log("Report generation initiated successfully");
       } catch (error) {
-        console.error('Error in triggerZapierWebhook:', error);
+        console.error('Error in generateReport:', error);
         toast.error("Une erreur est survenue lors de la génération du rapport");
       }
     }
@@ -78,7 +80,7 @@ export const useQuizNavigation = () => {
     setStep(nextStep);
     
     if (step === 4) {
-      await triggerZapierWebhook(quizData);
+      await generateReport(quizData);
     }
   };
 

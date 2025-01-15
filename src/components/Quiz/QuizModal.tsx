@@ -1,8 +1,5 @@
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Progress } from "@/components/ui/progress";
-import { ChevronLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { QuizStep1 } from "./steps/QuizStep1";
 import { QuizStep2 } from "./steps/QuizStep2";
 import { QuizStep3 } from "./steps/QuizStep3";
@@ -12,6 +9,8 @@ import { QuizStep6 } from "./steps/QuizStep6";
 import { QuizStep7 } from "./steps/QuizStep7";
 import { QuizFinal } from "./steps/QuizFinal";
 import { LoadingStep } from "./steps/LoadingStep";
+import { QuizHeader } from "./components/QuizHeader";
+import { QuizBackground } from "./components/QuizBackground";
 
 export type QuizData = {
   name?: string;
@@ -30,7 +29,6 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
   const [showLoader, setShowLoader] = useState(false);
   
   const totalSteps = 8;
-  const progress = (step / totalSteps) * 100;
 
   const handleNext = () => {
     if (step === 5) {
@@ -57,63 +55,46 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
     setQuizData(prev => ({ ...prev, ...data }));
   };
 
+  const renderStep = () => {
+    if (showLoader) {
+      return <LoadingStep onComplete={handleLoaderComplete} />;
+    }
+
+    switch (step) {
+      case 1:
+        return <QuizStep1 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />;
+      case 2:
+        return <QuizStep2 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />;
+      case 3:
+        return <QuizStep3 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />;
+      case 4:
+        return <QuizStep4 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />;
+      case 5:
+        return <QuizStep5 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />;
+      case 6:
+        return <QuizStep6 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />;
+      case 7:
+        return <QuizStep7 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />;
+      case 8:
+        return <QuizFinal onDataUpdate={updateQuizData} data={quizData} />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md p-0 overflow-hidden bg-[#1B2A37] text-white border-none">
-        <div className="relative min-h-[600px]">
-          {/* Background with stars effect */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#8639F6] to-black z-0">
-            <div className="absolute inset-0" style={{
-              background: `
-                radial-gradient(1px 1px at 20px 30px, white, rgba(0,0,0,0)),
-                radial-gradient(1px 1px at 40px 70px, white, rgba(0,0,0,0)),
-                radial-gradient(1px 1px at 50px 160px, white, rgba(0,0,0,0)),
-                radial-gradient(1px 1px at 90px 40px, white, rgba(0,0,0,0)),
-                radial-gradient(1px 1px at 130px 80px, white, rgba(0,0,0,0)),
-                radial-gradient(1px 1px at 160px 120px, white, rgba(0,0,0,0)),
-                linear-gradient(to bottom, #8639F6, black)
-              `,
-              animation: 'twinkle 5s infinite',
-            }} />
+        <QuizBackground>
+          <QuizHeader 
+            step={step} 
+            totalSteps={totalSteps} 
+            onBack={handleBack} 
+          />
+          <div className="space-y-6">
+            {renderStep()}
           </div>
-
-          <div className="relative z-10 p-6">
-            {/* Header with progress */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between mb-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-white hover:bg-white/10"
-                  onClick={handleBack}
-                  disabled={step === 1}
-                >
-                  <ChevronLeft className="h-6 w-6" />
-                </Button>
-                <span className="font-display text-lg">{step}/{totalSteps}</span>
-              </div>
-              <Progress value={progress} className="h-1 bg-white/20" />
-            </div>
-
-            {/* Quiz Steps */}
-            <div className="space-y-6">
-              {showLoader ? (
-                <LoadingStep onComplete={handleLoaderComplete} />
-              ) : (
-                <>
-                  {step === 1 && <QuizStep1 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
-                  {step === 2 && <QuizStep2 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
-                  {step === 3 && <QuizStep3 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
-                  {step === 4 && <QuizStep4 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
-                  {step === 5 && <QuizStep5 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
-                  {step === 6 && <QuizStep6 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
-                  {step === 7 && <QuizStep7 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
-                  {step === 8 && <QuizFinal onDataUpdate={updateQuizData} data={quizData} />}
-                </>
-              )}
-            </div>
-          </div>
-        </div>
+        </QuizBackground>
       </DialogContent>
     </Dialog>
   );

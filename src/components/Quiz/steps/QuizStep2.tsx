@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { QuizData } from "@/pages/Quiz";
+import { QuizData } from "../QuizModal";
 import { zodiac } from "@/lib/zodiac";
 import { useState, useEffect } from "react";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import { fr } from "date-fns/locale";
 
 interface QuizStep2Props {
@@ -50,6 +50,12 @@ export const QuizStep2 = ({ onNext, onDataUpdate, data }: QuizStep2Props) => {
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newDate = new Date(e.target.value);
+    
+    if (!isValid(newDate)) {
+      console.error("Invalid date selected");
+      return;
+    }
+
     setBirthDate(newDate);
     setIsAnimating(true);
     
@@ -62,7 +68,7 @@ export const QuizStep2 = ({ onNext, onDataUpdate, data }: QuizStep2Props) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (birthDate) {
+    if (birthDate && isValid(birthDate)) {
       onDataUpdate({ birthDate });
       onNext();
     }
@@ -81,7 +87,7 @@ export const QuizStep2 = ({ onNext, onDataUpdate, data }: QuizStep2Props) => {
           <Input
             id="birthdate"
             type="date"
-            value={birthDate ? format(birthDate, "yyyy-MM-dd") : ""}
+            value={birthDate && isValid(birthDate) ? format(birthDate, "yyyy-MM-dd") : ""}
             onChange={handleDateChange}
             className="bg-white/10 border-white/20 text-white"
             required
@@ -103,7 +109,7 @@ export const QuizStep2 = ({ onNext, onDataUpdate, data }: QuizStep2Props) => {
       <Button
         type="submit"
         className="w-full bg-primary hover:bg-primary/90"
-        disabled={!birthDate}
+        disabled={!birthDate || !isValid(birthDate)}
       >
         Continuer
       </Button>

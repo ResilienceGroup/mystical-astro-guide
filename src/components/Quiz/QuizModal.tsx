@@ -71,12 +71,49 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
     }
   };
 
-  const handleNext = () => {
+  const triggerZapierWebhook = async () => {
+    if (step === 4) {
+      try {
+        const webhookUrl = "https://hooks.zapier.com/hooks/catch/20720574/2kofa3u/";
+        const response = await fetch(webhookUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: quizData.name,
+            birthDate: quizData.birthDate,
+            birthPlace: quizData.birthPlace,
+            birthTime: quizData.birthTime,
+            profileId: quizData.profileId
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to trigger Zapier webhook');
+        }
+
+        console.log("Zapier webhook triggered successfully");
+      } catch (error) {
+        console.error('Error triggering Zapier webhook:', error);
+        toast.error("Une erreur est survenue lors de la génération du rapport");
+      }
+    }
+  };
+
+  const handleNext = async () => {
     if (step === 7) {
       setShowLoader(true);
       return;
     }
-    setStep(prev => Math.min(prev + 1, totalSteps));
+    
+    const nextStep = Math.min(step + 1, totalSteps);
+    setStep(nextStep);
+    
+    // Trigger Zapier webhook after step 4
+    if (step === 4) {
+      await triggerZapierWebhook();
+    }
   };
 
   const handleBack = () => {

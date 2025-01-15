@@ -33,14 +33,20 @@ export const useQuizData = () => {
     try {
       console.log('Updating quiz response for profile:', profileId, 'with data:', data);
       
-      const { data: existingResponse } = await supabase
+      const { data: existingResponse, error: fetchError } = await supabase
         .from('quiz_responses')
         .select()
         .eq('profile_id', profileId)
-        .single();
+        .maybeSingle();
+
+      if (fetchError) {
+        console.error('Error fetching existing response:', fetchError);
+        throw fetchError;
+      }
 
       let result;
       if (existingResponse) {
+        console.log('Updating existing response');
         result = await supabase
           .from('quiz_responses')
           .update({
@@ -50,9 +56,11 @@ export const useQuizData = () => {
             relationship_status: data.relationshipStatus,
             element: data.element,
             goals: data.goals,
+            updated_at: new Date().toISOString()
           })
           .eq('profile_id', profileId);
       } else {
+        console.log('Creating new response');
         result = await supabase
           .from('quiz_responses')
           .insert({
@@ -62,7 +70,7 @@ export const useQuizData = () => {
             birth_time: data.birthTime,
             relationship_status: data.relationshipStatus,
             element: data.element,
-            goals: data.goals,
+            goals: data.goals
           });
       }
 
@@ -75,33 +83,42 @@ export const useQuizData = () => {
       console.log('Quiz response updated successfully');
     } catch (error) {
       console.error('Error in updateQuizResponse:', error);
+      toast.error("Une erreur est survenue lors de l'enregistrement des réponses");
     }
   };
 
   const updateQuizData = async (data: Partial<QuizData>) => {
     console.log('Updating quiz data with:', data);
     
-    if (data.name && !quizData.profileId) {
-      console.log('Creating new profile for name:', data.name);
-      const profileId = await createProfile(data.name);
-      
-      if (profileId) {
-        console.log('Created profile with ID:', profileId);
-        const newData = { ...quizData, ...data, profileId };
+    try {
+      if (data.name && !quizData.profileId) {
+        console.log('Creating new profile for name:', data.name);
+        const profileId = await createProfile(data.name);
+        
+        if (profileId) {
+          console.log('Created profile with ID:', profileId);
+          const newData = { ...quizData, ...data, profileId };
+          setQuizData(newData);
+          await updateQuizResponse(profileId, newData);
+          toast.success("Profil créé avec succès");
+        } else {
+          console.error('Failed to create profile');
+          toast.error("Échec de la création du profil");
+          return;
+        }
+      } else if (quizData.profileId) {
+        console.log('Updating existing profile:', quizData.profileId);
+        const newData = { ...quizData, ...data };
         setQuizData(newData);
-        await updateQuizResponse(profileId, newData);
+        await updateQuizResponse(quizData.profileId, newData);
+        toast.success("Réponses enregistrées");
       } else {
-        console.error('Failed to create profile');
-        return;
+        console.log('Updating local state only');
+        setQuizData(prev => ({ ...prev, ...data }));
       }
-    } else if (quizData.profileId) {
-      console.log('Updating existing profile:', quizData.profileId);
-      const newData = { ...quizData, ...data };
-      setQuizData(newData);
-      await updateQuizResponse(quizData.profileId, newData);
-    } else {
-      console.log('Updating local state only');
-      setQuizData(prev => ({ ...prev, ...data }));
+    } catch (error) {
+      console.error('Error in updateQuizData:', error);
+      toast.error("Une erreur est survenue lors de la mise à jour des données");
     }
   };
 

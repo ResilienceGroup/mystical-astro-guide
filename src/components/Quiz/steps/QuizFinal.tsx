@@ -132,40 +132,71 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
   return (
     <div className="space-y-6">
       {!reportData ? (
-        <div className="relative">
-          {/* Blurred Preview Background */}
-          <div className="absolute inset-0 -mt-12 opacity-20 pointer-events-none blur-sm">
-            <div className="space-y-4 p-6">
-              <div className="h-32 bg-white/10 rounded-lg"></div>
-              <div className="h-48 bg-white/10 rounded-lg"></div>
-              <div className="h-24 bg-white/10 rounded-lg"></div>
+        <div className="space-y-6">
+          <div className="relative">
+            <div className="absolute inset-0 -mt-12 opacity-20 pointer-events-none blur-sm">
+              <div className="space-y-4 p-6">
+                <div className="h-32 bg-white/10 rounded-lg"></div>
+                <div className="h-48 bg-white/10 rounded-lg"></div>
+                <div className="h-24 bg-white/10 rounded-lg"></div>
+              </div>
+            </div>
+
+            <div className="relative bg-gradient-to-b from-black/80 to-black/95 rounded-lg p-6 space-y-6">
+              <div className="text-center space-y-4">
+                <h2 className="font-display text-2xl">Ton Rapport Personnalisé est Prêt !</h2>
+                <p className="text-gray-300">Comme 2M d'utilisateurs, rentre ton email pour recevoir ton analyse astrologique détaillée</p>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <Input
+                  type="email"
+                  placeholder="Entre ton email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+                  required
+                />
+
+                <Button
+                  type="submit"
+                  className="w-full bg-[#8639F6] hover:bg-[#8639F6]/90"
+                  disabled={!email}
+                >
+                  Recevoir Mon Rapport
+                </Button>
+              </form>
             </div>
           </div>
 
-          <div className="relative bg-gradient-to-b from-black/80 to-black/95 rounded-lg p-6 space-y-6">
-            <div className="text-center space-y-4">
-              <h2 className="font-display text-2xl">Ton Rapport Personnalisé est Prêt !</h2>
-              <p className="text-gray-300">Comme 2M d'utilisateurs, rentre ton email pour recevoir ton analyse astrologique détaillée</p>
+          {/* Preview Report Section */}
+          <div className="space-y-4 opacity-50 pointer-events-none">
+            <div className="p-6 rounded-lg bg-white/5 space-y-4 relative overflow-hidden">
+              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+              <h3 className="relative z-10 text-xl font-display text-white">Ton Analyse Personnelle</h3>
+              <p className="relative z-10 text-white/80">
+                {data.name}, voici ton analyse astrologique basée sur ta date de naissance...
+              </p>
+              <div className="relative z-10 p-4 bg-white/5 rounded-lg">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-white/90 font-medium">15 JAN — 22 JAN</p>
+                    <p className="text-sm text-white/60">Période clé</p>
+                  </div>
+                  <span className="text-xs px-2 py-1 bg-[#8639F6]/20 text-[#8639F6] rounded">
+                    AMOUR
+                  </span>
+                </div>
+              </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <Input
-                type="email"
-                placeholder="Entre ton email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
-                required
-              />
-
-              <Button
-                type="submit"
-                className="w-full bg-[#8639F6] hover:bg-[#8639F6]/90"
-                disabled={!email}
-              >
-                Recevoir Mon Rapport
-              </Button>
-            </form>
+            <div className="p-6 rounded-lg bg-white/5 space-y-4 relative overflow-hidden">
+              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+              <h3 className="relative z-10 text-xl font-display text-white">Tes Opportunités</h3>
+              <p className="relative z-10 text-white/80">
+                Les aspects planétaires indiquent une période favorable pour...
+              </p>
+            </div>
           </div>
         </div>
       ) : (

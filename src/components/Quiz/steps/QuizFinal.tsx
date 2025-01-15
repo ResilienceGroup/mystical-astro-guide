@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { QuizData } from "../QuizModal";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Apple, Store, Users, Star, Shield } from "lucide-react";
+import { Download } from "lucide-react";
 
 interface QuizFinalProps {
   onDataUpdate: (data: Partial<QuizData>) => void;
@@ -26,6 +26,7 @@ interface ReportSection {
 
 export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
   const [email, setEmail] = useState("");
+  const [webhookUrl, setWebhookUrl] = useState("");
   const [reportData, setReportData] = useState<ReportSection[] | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,20 +35,40 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
       onDataUpdate({ email });
       
       try {
+        // First, send data to Zapier webhook
+        await fetch(webhookUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          mode: "no-cors",
+          body: JSON.stringify({
+            name: data.name,
+            birthDate: data.birthDate,
+            birthTime: data.birthTime,
+            birthPlace: data.birthPlace,
+            relationshipStatus: data.relationshipStatus,
+            element: data.element,
+            goals: data.goals,
+            email: email,
+            callbackUrl: `${window.location.origin}/api/report`
+          }),
+        });
+
         toast("Demande envoyée", {
           description: "Ton rapport est en cours de génération..."
         });
 
-        // Simulate receiving report data with personalized name
+        // Simulate receiving report data
         const simulatedReportData: ReportSection[] = [
           {
             title: "La profondeur sous le masque",
-            content: `${data.name}, en tant que Scorpion, tes expériences passées t'ont forgé un caractère fort et résilient. Tu possèdes une capacité unique à explorer les profondeurs de ton être et à transformer les défis en opportunités. Ton intuition aiguë et ton sens de la détermination t'aident à naviguer à travers les complexités de la vie.`,
+            content: "En tant que Scorpion, tes expériences passées t'ont forgé un caractère fort et résilient. Tu possèdes une capacité unique à explorer les profondeurs de ton être et à transformer les défis en opportunités. Ton intuition aiguë et ton sens de la détermination t'aident à naviguer à travers les complexités de la vie.",
             planetPosition: "Basé sur ton Soleil en Scorpion, ta Lune en Scorpion et ton Ascendant inconnu."
           },
           {
             title: "Hiver - Paix intérieure et introspection",
-            content: `${data.name}, cet hiver, tes valeurs fondamentales seront mises à l'épreuve. Le moment est idéal pour réfléchir à ce qui est vraiment important pour toi et peut-être apporter les changements nécessaires pour te sentir aligné avec tes véritables aspirations.`,
+            content: "Cet hiver, tes valeurs fondamentales seront mises à l'épreuve. Le moment est idéal pour réfléchir à ce qui est vraiment important pour toi et peut-être apporter les changements nécessaires pour te sentir aligné avec tes véritables aspirations.",
             planetPosition: "Durant cette saison, Neptune forme un trigone avec ton Soleil natal.",
             dates: [
               {
@@ -60,14 +81,15 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
             ],
             isBlurred: true
           },
+          // ... Other seasons would follow the same pattern
         ];
         
         setReportData(simulatedReportData);
 
       } catch (error) {
-        console.error("Error generating report:", error);
+        console.error("Error sending data to webhook:", error);
         toast("Erreur", {
-          description: "Une erreur est survenue lors de la génération du rapport"
+          description: "Une erreur est survenue lors de l'envoi des données"
         });
       }
     }
@@ -81,24 +103,10 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
             <p className="text-center text-white/90 font-medium">
               Télécharge l'application pour accéder à l'intégralité de ton rapport personnalisé
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button
-                variant="outline"
-                className="text-white border-white/20 hover:bg-white/10 gap-2"
-                onClick={() => window.open("https://apps.apple.com/app/moon-astral", "_blank")}
-              >
-                <Apple className="w-5 h-5" />
-                App Store
-              </Button>
-              <Button
-                variant="outline"
-                className="text-white border-white/20 hover:bg-white/10 gap-2"
-                onClick={() => window.open("https://play.google.com/store/apps/details?id=com.MoonAstral.android", "_blank")}
-              >
-                <Store className="w-5 h-5" />
-                Google Play
-              </Button>
-            </div>
+            <Button className="bg-[#8639F6] hover:bg-[#8639F6]/90">
+              <Download className="mr-2 h-4 w-4" />
+              Télécharger l'application
+            </Button>
           </div>
         )}
         
@@ -143,21 +151,6 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
             <p className="text-gray-300">Entre ton email pour recevoir ton analyse astrologique détaillée</p>
           </div>
 
-          <div className="grid grid-cols-3 gap-4 mb-6">
-            <div className="flex flex-col items-center p-4 bg-white/5 rounded-lg">
-              <Users className="h-6 w-6 text-[#8639F6] mb-2" />
-              <p className="text-sm text-white/80">2M+ utilisateurs</p>
-            </div>
-            <div className="flex flex-col items-center p-4 bg-white/5 rounded-lg">
-              <Star className="h-6 w-6 text-[#8639F6] mb-2" />
-              <p className="text-sm text-white/80">4.8/5 étoiles</p>
-            </div>
-            <div className="flex flex-col items-center p-4 bg-white/5 rounded-lg">
-              <Shield className="h-6 w-6 text-[#8639F6] mb-2" />
-              <p className="text-sm text-white/80">100% sécurisé</p>
-            </div>
-          </div>
-
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
               type="email"
@@ -167,11 +160,20 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
               className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
               required
             />
+            
+            <Input
+              type="url"
+              placeholder="URL du webhook Zapier"
+              value={webhookUrl}
+              onChange={(e) => setWebhookUrl(e.target.value)}
+              className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+              required
+            />
 
             <Button
               type="submit"
               className="w-full bg-[#8639F6] hover:bg-[#8639F6]/90"
-              disabled={!email}
+              disabled={!email || !webhookUrl}
             >
               Recevoir Mon Rapport
             </Button>

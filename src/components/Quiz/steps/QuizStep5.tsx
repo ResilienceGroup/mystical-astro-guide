@@ -12,13 +12,13 @@ export const QuizStep5 = ({ onNext, onDataUpdate, data }: QuizStep5Props) => {
   const [selectedGoals, setSelectedGoals] = useState<string[]>(data.goals || []);
 
   const goals = [
-    { label: "Family harmony", value: "family" },
-    { label: "Career", value: "career" },
-    { label: "Health", value: "health" },
-    { label: "Getting married", value: "marriage" },
-    { label: "Traveling the world", value: "travel" },
-    { label: "Education", value: "education" },
-    { label: "Friends", value: "friends" },
+    { label: "Harmonie familiale", value: "family", emoji: "👨‍👩‍👧‍👦" },
+    { label: "Carrière", value: "career", emoji: "💼" },
+    { label: "Santé", value: "health", emoji: "🧘‍♀️" },
+    { label: "Mariage", value: "marriage", emoji: "💍" },
+    { label: "Voyages", value: "travel", emoji: "✈️" },
+    { label: "Éducation", value: "education", emoji: "📚" },
+    { label: "Amitié", value: "friends", emoji: "🤝" },
   ];
 
   const toggleGoal = (value: string) => {
@@ -40,8 +40,8 @@ export const QuizStep5 = ({ onNext, onDataUpdate, data }: QuizStep5Props) => {
   return (
     <div className="space-y-6">
       <div className="text-center space-y-4">
-        <h2 className="font-display text-2xl">What are your goals for the future?</h2>
-        <p className="text-gray-300">Selected: {selectedGoals.length}/3</p>
+        <h2 className="font-display text-2xl">Quels sont tes objectifs pour l'avenir ?</h2>
+        <p className="text-gray-300">Sélectionnés : {selectedGoals.length}/3</p>
       </div>
 
       <div className="space-y-3">
@@ -57,6 +57,7 @@ export const QuizStep5 = ({ onNext, onDataUpdate, data }: QuizStep5Props) => {
             onClick={() => toggleGoal(goal.value)}
             disabled={selectedGoals.length >= 3 && !selectedGoals.includes(goal.value)}
           >
+            <span className="mr-2 text-xl">{goal.emoji}</span>
             {goal.label}
           </Button>
         ))}
@@ -67,7 +68,7 @@ export const QuizStep5 = ({ onNext, onDataUpdate, data }: QuizStep5Props) => {
         onClick={handleNext}
         disabled={selectedGoals.length === 0}
       >
-        Continue
+        Continuer
       </Button>
     </div>
   );

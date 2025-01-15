@@ -1,10 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Apple, Store } from "lucide-react";
-import { useState } from "react";
-import { QuizModal } from "./Quiz/QuizModal";
+import { useNavigate } from "react-router-dom";
 
 export const Hero = () => {
-  const [quizOpen, setQuizOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="relative min-h-screen flex items-center justify-center text-white py-20 px-4 overflow-hidden">
@@ -56,7 +55,7 @@ export const Hero = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
           <Button
             className="bg-primary hover:bg-primary/90 text-white px-8 py-6 text-lg rounded-full w-full sm:w-auto"
-            onClick={() => setQuizOpen(true)}
+            onClick={() => navigate('/quiz')}
           >
             Obtenir ta prédiction personnalisée
           </Button>
@@ -80,8 +79,6 @@ export const Hero = () => {
           </Button>
         </div>
       </div>
-
-      <QuizModal open={quizOpen} onOpenChange={setQuizOpen} />
     </div>
   );
 };

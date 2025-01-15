@@ -1,6 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { QuizData } from "../QuizModal";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { QuizData } from "@/pages/Quiz";
 import { zodiac } from "@/lib/zodiac";
+import { useState, useEffect } from "react";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 interface QuizStep2Props {
   onNext: () => void;
@@ -9,39 +14,99 @@ interface QuizStep2Props {
 }
 
 export const QuizStep2 = ({ onNext, onDataUpdate, data }: QuizStep2Props) => {
-  const handleDateSelect = (date: Date) => {
-    onDataUpdate({ birthDate: date });
-    onNext();
+  const [birthDate, setBirthDate] = useState(data.birthDate || "");
+  const [zodiacSign, setZodiacSign] = useState<typeof zodiac[0] | null>(null);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const getZodiacSign = (date: Date) => {
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+
+    // Convert date strings to day numbers for comparison
+    const getDayNumber = (m: number, d: number) => m * 100 + d;
+    const dateNum = getDayNumber(month, day);
+
+    return zodiac.find((sign, index) => {
+      const [startDate, endDate] = sign.dates.split(" - ");
+      const [startDay, startMonth] = startDate.split(" ");
+      const [endDay, endMonth] = endDate.split(" ");
+      
+      const startNum = getDayNumber(
+        ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"].indexOf(startMonth) + 1,
+        parseInt(startDay)
+      );
+      
+      const endNum = getDayNumber(
+        ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"].indexOf(endMonth) + 1,
+        parseInt(endDay)
+      );
+
+      if (endNum < startNum) {
+        return dateNum >= startNum || dateNum <= endNum;
+      }
+      return dateNum >= startNum && dateNum <= endNum;
+    }) || null;
+  };
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const date = new Date(e.target.value);
+    setBirthDate(date);
+    setIsAnimating(true);
+    
+    const sign = getZodiacSign(date);
+    setTimeout(() => {
+      setZodiacSign(sign);
+      setIsAnimating(false);
+    }, 500);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (birthDate) {
+      onDataUpdate({ birthDate });
+      onNext();
+    }
   };
 
   return (
-    <div className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6 text-white">
       <div className="text-center space-y-4">
-        <h2 className="font-display text-2xl">Own Sign</h2>
-        <p className="text-gray-400">Step 2</p>
-      </div>
-
-      <div className="relative">
-        <img
-          src="/lovable-uploads/262311bb-fdc7-48a5-9a00-2a22ebc3f33b.png"
-          alt="Zodiac Wheel"
-          className="w-full h-auto"
-        />
+        <h2 className="font-display text-2xl">Quelle est ta date de naissance ?</h2>
+        <p className="text-gray-300">Cette information nous permet de calculer ton signe astrologique</p>
       </div>
 
       <div className="space-y-4">
-        <p className="text-sm text-gray-300">Own Birthday</p>
-        <div className="grid grid-cols-3 gap-2">
-          {/* This is a simplified version. You'll need to implement a proper date picker */}
-          <Button
-            variant="outline"
-            className="text-white border-white/20 hover:bg-white/10"
-            onClick={() => handleDateSelect(new Date())}
-          >
-            Select Date
-          </Button>
+        <div className="space-y-2">
+          <Label htmlFor="birthdate">Date de naissance</Label>
+          <Input
+            id="birthdate"
+            type="date"
+            value={birthDate ? format(new Date(birthDate), "yyyy-MM-dd") : ""}
+            onChange={handleDateChange}
+            className="bg-white/10 border-white/20 text-white"
+            required
+          />
         </div>
+
+        {zodiacSign && (
+          <div className={`text-center space-y-4 transition-opacity duration-500 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
+            <div className="text-6xl">{zodiacSign.symbol}</div>
+            <div className="space-y-1">
+              <h3 className="font-display text-xl">{zodiacSign.name}</h3>
+              <p className="text-sm text-gray-300">{zodiacSign.dates}</p>
+              <p className="text-sm text-gray-300">Élément: {zodiacSign.element}</p>
+            </div>
+          </div>
+        )}
       </div>
-    </div>
+
+      <Button
+        type="submit"
+        className="w-full bg-primary hover:bg-primary/90"
+        disabled={!birthDate}
+      >
+        Continuer
+      </Button>
+    </form>
   );
 };

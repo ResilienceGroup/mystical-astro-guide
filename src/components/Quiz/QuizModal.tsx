@@ -2,11 +2,11 @@ import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { QuizStep1 } from "./steps/QuizStep1";
 import { QuizStep2 } from "./steps/QuizStep2";
+import { QuizStep6 } from "./steps/QuizStep6";
+import { QuizStep7 } from "./steps/QuizStep7";
 import { QuizStep3 } from "./steps/QuizStep3";
 import { QuizStep4 } from "./steps/QuizStep4";
 import { QuizStep5 } from "./steps/QuizStep5";
-import { QuizStep6 } from "./steps/QuizStep6";
-import { QuizStep7 } from "./steps/QuizStep7";
 import { QuizFinal } from "./steps/QuizFinal";
 import { LoadingStep } from "./steps/LoadingStep";
 import { QuizHeader } from "./components/QuizHeader";
@@ -31,7 +31,7 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
   const totalSteps = 8;
 
   const handleNext = () => {
-    if (step === 5) {
+    if (step === 7) {
       setShowLoader(true);
       return;
     }
@@ -48,7 +48,7 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
 
   const handleLoaderComplete = () => {
     setShowLoader(false);
-    setStep(6);
+    setStep(8);
   };
 
   const updateQuizData = (data: Partial<QuizData>) => {
@@ -66,15 +66,15 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
       case 2:
         return <QuizStep2 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />;
       case 3:
-        return <QuizStep3 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />;
-      case 4:
-        return <QuizStep4 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />;
-      case 5:
-        return <QuizStep5 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />;
-      case 6:
         return <QuizStep6 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />;
-      case 7:
+      case 4:
         return <QuizStep7 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />;
+      case 5:
+        return <QuizStep3 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />;
+      case 6:
+        return <QuizStep4 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />;
+      case 7:
+        return <QuizStep5 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />;
       case 8:
         return <QuizFinal onDataUpdate={updateQuizData} data={quizData} />;
       default:

@@ -4,6 +4,7 @@ import { QuizData } from "../QuizModal";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Apple, Download } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface QuizFinalProps {
   onDataUpdate: (data: Partial<QuizData>) => void;
@@ -30,10 +31,18 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      onDataUpdate({ email });
-      
+    if (email && data.profileId) {
       try {
+        // Update profile with email
+        const { error } = await supabase
+          .from('profiles')
+          .update({ email })
+          .eq('id', data.profileId);
+
+        if (error) throw error;
+        
+        onDataUpdate({ email });
+        
         // Simulate receiving report data
         const simulatedReportData: ReportSection[] = [
           {
@@ -60,15 +69,11 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
         
         setReportData(simulatedReportData);
         
-        toast("Demande envoyée", {
-          description: "Ton rapport est en cours de génération..."
-        });
+        toast.success("Rapport généré avec succès !");
 
       } catch (error) {
-        console.error("Error sending data:", error);
-        toast("Erreur", {
-          description: "Une erreur est survenue lors de l'envoi des données"
-        });
+        console.error("Error updating profile:", error);
+        toast.error("Une erreur est survenue lors de la génération du rapport");
       }
     }
   };

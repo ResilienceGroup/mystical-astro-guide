@@ -11,6 +11,8 @@ import { QuizFinal } from "./steps/QuizFinal";
 import { LoadingStep } from "./steps/LoadingStep";
 import { QuizHeader } from "./components/QuizHeader";
 import { QuizBackground } from "./components/QuizBackground";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export type QuizData = {
   name?: string;
@@ -21,6 +23,7 @@ export type QuizData = {
   element?: string;
   goals?: string[];
   email?: string;
+  profileId?: string;
 }
 
 export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) => {
@@ -29,6 +32,44 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
   const [showLoader, setShowLoader] = useState(false);
   
   const totalSteps = 8;
+
+  const createProfile = async (name: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .insert([{ name }])
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data.id;
+    } catch (error) {
+      console.error('Error creating profile:', error);
+      toast.error("Une erreur est survenue lors de la création du profil");
+      return null;
+    }
+  };
+
+  const updateQuizResponse = async (profileId: string, data: Partial<QuizData>) => {
+    try {
+      const { error } = await supabase
+        .from('quiz_responses')
+        .upsert({
+          profile_id: profileId,
+          birth_place: data.birthPlace,
+          birth_date: data.birthDate?.toISOString(),
+          birth_time: data.birthTime,
+          relationship_status: data.relationshipStatus,
+          element: data.element,
+          goals: data.goals,
+        });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error updating quiz response:', error);
+      toast.error("Une erreur est survenue lors de l'enregistrement des réponses");
+    }
+  };
 
   const handleNext = () => {
     if (step === 7) {
@@ -51,8 +92,22 @@ export const QuizModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
     setStep(8);
   };
 
-  const updateQuizData = (data: Partial<QuizData>) => {
-    setQuizData(prev => ({ ...prev, ...data }));
+  const updateQuizData = async (data: Partial<QuizData>) => {
+    const updatedData = { ...quizData, ...data };
+    setQuizData(updatedData);
+
+    // If name is being set, create a new profile
+    if (data.name && !quizData.profileId) {
+      const profileId = await createProfile(data.name);
+      if (profileId) {
+        setQuizData(prev => ({ ...prev, profileId }));
+        await updateQuizResponse(profileId, updatedData);
+      }
+    } 
+    // Update quiz responses for existing profile
+    else if (quizData.profileId) {
+      await updateQuizResponse(quizData.profileId, updatedData);
+    }
   };
 
   const renderStep = () => {

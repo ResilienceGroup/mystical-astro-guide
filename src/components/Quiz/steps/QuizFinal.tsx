@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { QuizData } from "../QuizModal";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface QuizFinalProps {
   onDataUpdate: (data: Partial<QuizData>) => void;
@@ -10,12 +11,45 @@ interface QuizFinalProps {
 
 export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
   const [email, setEmail] = useState("");
+  const [webhookUrl, setWebhookUrl] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
       onDataUpdate({ email });
-      // Here we'll later add the webhook call
+      
+      try {
+        // First, send data to Zapier webhook
+        const response = await fetch(webhookUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          mode: "no-cors",
+          body: JSON.stringify({
+            name: data.name,
+            birthDate: data.birthDate,
+            birthTime: data.birthTime,
+            birthPlace: data.birthPlace,
+            relationshipStatus: data.relationshipStatus,
+            element: data.element,
+            goals: data.goals,
+            email: email
+          }),
+        });
+
+        toast({
+          title: "Demande envoyée",
+          description: "Ton rapport est en cours de génération...",
+        });
+      } catch (error) {
+        console.error("Error sending data to webhook:", error);
+        toast({
+          title: "Erreur",
+          description: "Une erreur est survenue lors de l'envoi des données",
+          variant: "destructive",
+        });
+      }
     }
   };
 
@@ -35,10 +69,20 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
           className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
           required
         />
+        
+        <Input
+          type="url"
+          placeholder="URL du webhook Zapier"
+          value={webhookUrl}
+          onChange={(e) => setWebhookUrl(e.target.value)}
+          className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+          required
+        />
+
         <Button
           type="submit"
           className="w-full bg-primary hover:bg-primary/90"
-          disabled={!email}
+          disabled={!email || !webhookUrl}
         >
           Recevoir Mon Rapport
         </Button>

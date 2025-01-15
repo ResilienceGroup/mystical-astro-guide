@@ -1,11 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { QuizData } from "../QuizModal";
 import { zodiac } from "@/lib/zodiac";
-import { useState, useEffect } from "react";
-import { format, isValid } from "date-fns";
-import { fr } from "date-fns/locale";
+import { useState } from "react";
+import { isValid } from "date-fns";
+import { BirthDateInput } from "./birthdate/BirthDateInput";
+import { ZodiacDisplay } from "./birthdate/ZodiacDisplay";
 
 interface QuizStep2Props {
   onNext: () => void;
@@ -22,11 +21,10 @@ export const QuizStep2 = ({ onNext, onDataUpdate, data }: QuizStep2Props) => {
     const month = date.getMonth() + 1;
     const day = date.getDate();
 
-    // Convert date strings to day numbers for comparison
     const getDayNumber = (m: number, d: number) => m * 100 + d;
     const dateNum = getDayNumber(month, day);
 
-    return zodiac.find((sign, index) => {
+    return zodiac.find((sign) => {
       const [startDate, endDate] = sign.dates.split(" - ");
       const [startDay, startMonth] = startDate.split(" ");
       const [endDay, endMonth] = endDate.split(" ");
@@ -48,14 +46,7 @@ export const QuizStep2 = ({ onNext, onDataUpdate, data }: QuizStep2Props) => {
     }) || null;
   };
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newDate = new Date(e.target.value);
-    
-    if (!isValid(newDate)) {
-      console.error("Invalid date selected");
-      return;
-    }
-
+  const handleDateChange = (newDate: Date) => {
     setBirthDate(newDate);
     setIsAnimating(true);
     
@@ -82,28 +73,15 @@ export const QuizStep2 = ({ onNext, onDataUpdate, data }: QuizStep2Props) => {
       </div>
 
       <div className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="birthdate">Date de naissance</Label>
-          <Input
-            id="birthdate"
-            type="date"
-            value={birthDate && isValid(birthDate) ? format(birthDate, "yyyy-MM-dd") : ""}
-            onChange={handleDateChange}
-            className="bg-white/10 border-white/20 text-white"
-            required
-          />
-        </div>
+        <BirthDateInput 
+          birthDate={birthDate}
+          onDateChange={handleDateChange}
+        />
 
-        {zodiacSign && (
-          <div className={`text-center space-y-4 transition-opacity duration-500 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
-            <div className="text-6xl">{zodiacSign.symbol}</div>
-            <div className="space-y-1">
-              <h3 className="font-display text-xl">{zodiacSign.name}</h3>
-              <p className="text-sm text-gray-300">{zodiacSign.dates}</p>
-              <p className="text-sm text-gray-300">Élément: {zodiacSign.element}</p>
-            </div>
-          </div>
-        )}
+        <ZodiacDisplay 
+          zodiacSign={zodiacSign}
+          isAnimating={isAnimating}
+        />
       </div>
 
       <Button

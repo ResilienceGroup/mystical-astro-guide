@@ -7,6 +7,17 @@ export const useQuizResponses = () => {
     try {
       console.log('Creating quiz response for profile:', profileId);
       
+      const { data: existingResponse } = await supabase
+        .from('quiz_responses')
+        .select()
+        .eq('profile_id', profileId)
+        .single();
+
+      if (existingResponse) {
+        console.log('Quiz response already exists for profile:', profileId);
+        return existingResponse;
+      }
+
       const { data: response, error } = await supabase
         .from('quiz_responses')
         .insert([{ 
@@ -44,12 +55,15 @@ export const useQuizResponses = () => {
         relationship_status: data.relationshipStatus,
         element: data.element,
         goals: data.goals,
+        email: data.email,
         updated_at: new Date().toISOString()
       };
 
       const { error: updateError } = await supabase
         .from('quiz_responses')
-        .upsert([quizResponseData]);
+        .upsert([quizResponseData], {
+          onConflict: 'profile_id'
+        });
 
       if (updateError) {
         console.error('Error updating quiz response:', updateError);
@@ -77,6 +91,9 @@ export const useQuizResponses = () => {
       }
       if (data.goals) {
         toast.success("Objectifs enregistrés avec succès");
+      }
+      if (data.email) {
+        toast.success("Email enregistré avec succès");
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';

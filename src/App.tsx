@@ -8,6 +8,7 @@ import Legal from "./pages/Legal";
 import Quiz from "./pages/Quiz";
 import Support from "./pages/Support";
 import Privacy from "./pages/Privacy";
+import Loader from "./pages/Loader";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/support" element={<Support />} />
           <Route path="/privacy" element={<Privacy />} />
+          <Route path="/loader" element={<Loader />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

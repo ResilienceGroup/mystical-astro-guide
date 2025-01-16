@@ -26,13 +26,13 @@ export type QuizData = {
 }
 
 const Quiz = () => {
-  const [step, setStep] = useState(0);  // Changed from 1 to 0
+  const [step, setStep] = useState(0);
   const [quizData, setQuizData] = useState<QuizData>({});
   const [showLoader, setShowLoader] = useState(false);
   const navigate = useNavigate();
   
   const totalSteps = 8;
-  const progress = ((step) / totalSteps) * 100;  // Adjusted progress calculation
+  const progress = ((step) / totalSteps) * 100;
 
   const handleNext = () => {
     if (step === 7) {
@@ -47,11 +47,20 @@ const Quiz = () => {
       setShowLoader(false);
       return;
     }
-    if (step === 0) {  // Changed from 1 to 0
+    if (step === 0) {
       navigate('/');
       return;
     }
-    setStep(prev => Math.max(prev - 1, 0));  // Changed from 1 to 0
+    setStep(prev => Math.max(prev - 1, 0));
+  };
+
+  const handleLoaderComplete = () => {
+    setShowLoader(false);
+    setStep(8);
+  };
+
+  const updateQuizData = (data: Partial<QuizData>) => {
+    setQuizData(prev => ({ ...prev, ...data }));
   };
 
   return (

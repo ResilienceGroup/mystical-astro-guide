@@ -32,9 +32,11 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
 
         if (profileError) {
           console.error("Error updating profile:", profileError);
+          toast.error("Une erreur est survenue lors de la mise à jour de votre profil");
           throw profileError;
         }
         console.log("Profile updated successfully");
+        toast.success("Email enregistré avec succès");
 
         console.log("Fetching report for profile:", data.profileId);
         const { data: reportData, error: reportError } = await supabase

@@ -97,12 +97,10 @@ export const useQuizData = () => {
         
         if (profileId) {
           console.log('Created profile with ID:', profileId);
-          setQuizData(prev => {
-            const newData = { ...prev, ...data, profileId };
-            console.log('New quiz data state:', newData);
-            return newData;
-          });
-          await updateQuizResponse(profileId, { ...quizData, ...data });
+          const newData = { ...quizData, ...data, profileId };
+          console.log('Setting new quiz data state:', newData);
+          setQuizData(newData);
+          await updateQuizResponse(profileId, newData);
           toast.success("Profil créé avec succès");
         } else {
           console.error('Failed to create profile');
@@ -111,20 +109,16 @@ export const useQuizData = () => {
         }
       } else if (quizData.profileId) {
         console.log('Updating existing profile:', quizData.profileId);
-        setQuizData(prev => {
-          const newData = { ...prev, ...data };
-          console.log('New quiz data state:', newData);
-          return newData;
-        });
-        await updateQuizResponse(quizData.profileId, { ...quizData, ...data });
+        const newData = { ...quizData, ...data };
+        console.log('Setting new quiz data state:', newData);
+        setQuizData(newData);
+        await updateQuizResponse(quizData.profileId, newData);
         toast.success("Réponses enregistrées");
       } else {
         console.log('Updating local state only');
-        setQuizData(prev => {
-          const newData = { ...prev, ...data };
-          console.log('New quiz data state:', newData);
-          return newData;
-        });
+        const newData = { ...quizData, ...data };
+        console.log('Setting new quiz data state:', newData);
+        setQuizData(newData);
       }
     } catch (error) {
       console.error('Error in updateQuizData:', error);

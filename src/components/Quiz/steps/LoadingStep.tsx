@@ -9,7 +9,7 @@ export const LoadingStep = ({ onComplete }: LoadingStepProps) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       onComplete();
-    }, 8000); // Augmenté à 8 secondes
+    }, 20000); // Changed from 8000 to 20000 milliseconds (20 seconds)
 
     return () => clearTimeout(timer);
   }, [onComplete]);

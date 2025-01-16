@@ -6,6 +6,31 @@ import { toast } from "sonner";
 export const useQuizData = () => {
   const [quizData, setQuizData] = useState<QuizData>({});
 
+  const createQuizResponse = async (profileId: string) => {
+    try {
+      console.log('Creating initial quiz response for profile:', profileId);
+      
+      const { data: response, error } = await supabase
+        .from('quiz_responses')
+        .insert([{ profile_id: profileId }])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating quiz response:', error);
+        toast.error("Une erreur est survenue lors de la création de votre profil");
+        throw error;
+      }
+
+      console.log('Quiz response created successfully:', response);
+      return response;
+    } catch (error) {
+      console.error('Error in createQuizResponse:', error);
+      toast.error("Une erreur est survenue lors de la création de votre profil");
+      throw error;
+    }
+  };
+
   const updateQuizResponse = async (profileId: string, data: Partial<QuizData>) => {
     try {
       console.log('Updating quiz response for profile:', profileId, 'with data:', data);
@@ -21,6 +46,11 @@ export const useQuizData = () => {
         throw fetchError;
       }
 
+      if (!existingResponse) {
+        console.log('No existing response found, creating new one');
+        await createQuizResponse(profileId);
+      }
+
       const quizResponseData = {
         profile_id: profileId,
         birth_place: data.birthPlace,
@@ -32,27 +62,19 @@ export const useQuizData = () => {
         updated_at: new Date().toISOString()
       };
 
-      let result;
-      if (existingResponse) {
-        console.log('Updating existing response');
-        result = await supabase
-          .from('quiz_responses')
-          .update(quizResponseData)
-          .eq('profile_id', profileId);
-      } else {
-        console.log('Creating new response');
-        result = await supabase
-          .from('quiz_responses')
-          .insert([quizResponseData]);
-      }
+      const { error: updateError } = await supabase
+        .from('quiz_responses')
+        .update(quizResponseData)
+        .eq('profile_id', profileId);
 
-      if (result.error) {
-        console.error('Error updating quiz response:', result.error);
+      if (updateError) {
+        console.error('Error updating quiz response:', updateError);
         toast.error("Une erreur est survenue lors de l'enregistrement des réponses");
-        throw result.error;
+        throw updateError;
       }
       
       console.log('Quiz response updated successfully');
+      toast.success("Réponses enregistrées");
     } catch (error) {
       console.error('Error in updateQuizResponse:', error);
       toast.error("Une erreur est survenue lors de l'enregistrement des réponses");
@@ -63,13 +85,15 @@ export const useQuizData = () => {
     console.log('Updating quiz data with:', data);
     
     try {
+      const newData = { ...quizData, ...data };
+      setQuizData(newData);
+      
       if (data.profileId) {
-        const newData = { ...quizData, ...data };
-        setQuizData(newData);
+        if (Object.keys(quizData).length === 0) {
+          // This is the first update (step 1), create initial quiz response
+          await createQuizResponse(data.profileId);
+        }
         await updateQuizResponse(data.profileId, newData);
-        toast.success("Réponses enregistrées");
-      } else {
-        setQuizData(prev => ({ ...prev, ...data }));
       }
     } catch (error) {
       console.error('Error in updateQuizData:', error);

@@ -37,11 +37,12 @@ export const useReportCreation = () => {
 
       if (reportError) {
         console.error('Error creating empty report:', reportError);
+        toast.error("Une erreur est survenue lors de la création de votre thème astral");
         throw reportError;
       }
 
       console.log('Empty report created:', reportData);
-      toast.success("Nous commençons les calculs de votre thème astral.");
+      toast.success("Nous commençons les calculs de votre thème astral");
       return reportData;
 
     } catch (error) {

@@ -15,16 +15,15 @@ export const useQuizNavigation = () => {
   const { createEmptyReport, generateReportContent } = useReportCreation();
 
   const handleNext = async (quizData: QuizData) => {
-    if (step === 7) {
-      moveToNextStep(step);
-      return;
-    }
-    
-    // Create empty report and start generation at step 4
+    console.log('Handling next step:', step, 'with quiz data:', quizData);
+
+    // Create empty report at step 4
     if (step === 4) {
       try {
+        console.log('Step 4: Creating empty report');
         const report = await createEmptyReport(quizData);
         if (report) {
+          console.log('Report created, initiating content generation');
           await generateReportContent(quizData, report.id);
         }
       } catch (error) {
@@ -32,6 +31,11 @@ export const useQuizNavigation = () => {
       }
     }
 
+    if (step === 7) {
+      moveToNextStep(step);
+      return;
+    }
+    
     moveToNextStep(step);
   };
 

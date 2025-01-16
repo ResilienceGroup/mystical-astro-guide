@@ -41,11 +41,11 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are an expert astrologer providing personalized astrological readings. Format your response in JSON with the following fields: personality_analysis, opportunities, challenges, love_insights, career_guidance, and spiritual_growth.'
+            content: 'You are an expert astrologer providing personalized astrological readings in French. Format your response in JSON with the following fields: personality_analysis, opportunities, challenges, love_insights, career_guidance, and spiritual_growth.'
           },
           {
             role: 'user',
-            content: `Generate an astrological report for ${name}, born on ${birthDate} at ${birthTime} in ${birthPlace}. Include personality analysis, opportunities, challenges, love insights, career guidance, and spiritual growth.`
+            content: `Generate an astrological report in French for ${name}, born on ${birthDate} at ${birthTime} in ${birthPlace}. Include personality analysis, opportunities, challenges, love insights, career guidance, and spiritual growth.`
           }
         ],
       }),

@@ -8,20 +8,8 @@ export const useQuizData = () => {
 
   const createQuizResponse = async (profileId: string) => {
     try {
-      console.log('Creating initial quiz response for profile:', profileId);
+      console.log('Creating quiz response for profile:', profileId);
       
-      // Check if response already exists
-      const { data: existingResponse } = await supabase
-        .from('quiz_responses')
-        .select()
-        .eq('profile_id', profileId)
-        .maybeSingle();
-
-      if (existingResponse) {
-        console.log('Quiz response already exists:', existingResponse);
-        return existingResponse;
-      }
-
       const { data: response, error } = await supabase
         .from('quiz_responses')
         .insert([{ 
@@ -50,17 +38,6 @@ export const useQuizData = () => {
     try {
       console.log('Updating quiz response for profile:', profileId, 'with data:', data);
       
-      const { data: existingResponse } = await supabase
-        .from('quiz_responses')
-        .select()
-        .eq('profile_id', profileId)
-        .maybeSingle();
-
-      if (!existingResponse) {
-        console.log('No existing response found, creating new one');
-        await createQuizResponse(profileId);
-      }
-
       const quizResponseData = {
         profile_id: profileId,
         birth_place: data.birthPlace,
@@ -98,9 +75,12 @@ export const useQuizData = () => {
       setQuizData(newData);
       
       if (data.profileId) {
-        // This is the first update (step 1), create initial quiz response
+        console.log('Creating initial quiz response for profile:', data.profileId);
         await createQuizResponse(data.profileId);
-        await updateQuizResponse(data.profileId, newData);
+      }
+
+      if (quizData.profileId) {
+        await updateQuizResponse(quizData.profileId, newData);
       }
     } catch (error) {
       console.error('Error in updateQuizData:', error);

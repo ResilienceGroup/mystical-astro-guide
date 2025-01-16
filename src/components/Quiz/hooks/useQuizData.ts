@@ -24,7 +24,10 @@ export const useQuizData = () => {
 
       const { data: response, error } = await supabase
         .from('quiz_responses')
-        .insert([{ profile_id: profileId }])
+        .insert([{ 
+          profile_id: profileId,
+          updated_at: new Date().toISOString()
+        }])
         .select()
         .single();
 
@@ -71,8 +74,7 @@ export const useQuizData = () => {
 
       const { error: updateError } = await supabase
         .from('quiz_responses')
-        .upsert([quizResponseData])
-        .eq('profile_id', profileId);
+        .upsert([quizResponseData]);
 
       if (updateError) {
         console.error('Error updating quiz response:', updateError);
@@ -96,10 +98,8 @@ export const useQuizData = () => {
       setQuizData(newData);
       
       if (data.profileId) {
-        if (Object.keys(quizData).length === 0) {
-          // This is the first update (step 1), create initial quiz response
-          await createQuizResponse(data.profileId);
-        }
+        // This is the first update (step 1), create initial quiz response
+        await createQuizResponse(data.profileId);
         await updateQuizResponse(data.profileId, newData);
       }
     } catch (error) {

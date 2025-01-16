@@ -5,6 +5,10 @@ import { toast } from "sonner";
 export const useEmptyReport = () => {
   const createEmptyReport = async (quizData: QuizData) => {
     try {
+      if (!quizData.profileId) {
+        throw new Error('No profile ID provided');
+      }
+
       console.log('Creating empty report for profile:', quizData.profileId);
       
       // Check if report already exists

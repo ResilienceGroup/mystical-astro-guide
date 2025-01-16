@@ -38,23 +38,13 @@ export const QuizStep1 = ({ onNext, onDataUpdate, data }: QuizStep1Props) => {
         />
       </div>
 
-      <div className="space-y-4">
-        <Button
-          type="submit"
-          className="w-full bg-primary hover:bg-primary/90"
-          disabled={!name.trim()}
-        >
-          Continuer
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          className="w-full text-gray-400 hover:text-white hover:bg-white/10"
-          onClick={onNext}
-        >
-          Passer cette étape
-        </Button>
-      </div>
+      <Button
+        type="submit"
+        className="w-full bg-primary hover:bg-primary/90"
+        disabled={!name.trim()}
+      >
+        Continuer
+      </Button>
     </form>
   );
 };

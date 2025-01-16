@@ -17,30 +17,41 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Submitting email:", email, "for profile:", data.profileId);
+    
     if (email && data.profileId) {
       try {
-        // Mettre à jour le profil avec l'email
+        console.log("Updating profile with email");
         const { error: profileError } = await supabase
           .from('profiles')
           .update({ email })
           .eq('id', data.profileId);
 
-        if (profileError) throw profileError;
+        if (profileError) {
+          console.error("Error updating profile:", profileError);
+          throw profileError;
+        }
+        console.log("Profile updated successfully");
 
-        // Récupérer le rapport existant
+        console.log("Fetching report for profile:", data.profileId);
         const { data: reportData, error: reportError } = await supabase
           .from('reports')
           .select('*')
           .eq('profile_id', data.profileId)
           .maybeSingle();
 
-        if (reportError) throw reportError;
+        if (reportError) {
+          console.error("Error fetching report:", reportError);
+          throw reportError;
+        }
 
+        console.log("Report data received:", reportData);
         if (!reportData) {
+          console.error("No report found for profile:", data.profileId);
           throw new Error("Aucun rapport trouvé");
         }
 
-        // Transformer les données du rapport en sections
+        console.log("Transforming report data into sections");
         const sections: ReportSectionType[] = [
           {
             title: "Ton Analyse Personnelle",
@@ -73,6 +84,7 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
           }
         ];
         
+        console.log("Setting report data state with sections:", sections);
         onDataUpdate({ email });
         setReportData(sections);
         toast.success("Rapport généré avec succès !");
@@ -81,8 +93,13 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
         console.error("Erreur lors de la mise à jour du profil ou de la récupération du rapport:", error);
         toast.error("Une erreur est survenue lors de la génération du rapport");
       }
+    } else {
+      console.error("Missing email or profileId", { email, profileId: data.profileId });
+      toast.error("Email ou profil manquant");
     }
   };
+
+  console.log("Current state:", { email, reportData, profileId: data.profileId });
 
   return (
     <div className="space-y-6">

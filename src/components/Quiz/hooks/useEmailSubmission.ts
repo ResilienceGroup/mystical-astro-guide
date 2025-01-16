@@ -3,10 +3,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { QuizData } from "../types/quiz";
 import { ReportSection } from "../types/report";
+import { useQuizResponses } from "./useQuizResponses";
 
 export const useEmailSubmission = (profileId: string | undefined, onDataUpdate: (data: Partial<QuizData>) => void) => {
   const [isLoading, setIsLoading] = useState(false);
   const [reportData, setReportData] = useState<ReportSection[] | null>(null);
+  const { updateQuizResponse } = useQuizResponses();
 
   const handleEmailSubmit = async (email: string) => {
     setIsLoading(true);
@@ -14,6 +16,7 @@ export const useEmailSubmission = (profileId: string | undefined, onDataUpdate: 
     
     if (email && profileId) {
       try {
+        // Mise à jour du profil
         console.log("Updating profile with email");
         const { error: profileError } = await supabase
           .from('profiles')
@@ -28,9 +31,19 @@ export const useEmailSubmission = (profileId: string | undefined, onDataUpdate: 
           toast.error("Une erreur est survenue lors de la mise à jour de votre profil");
           throw profileError;
         }
-        console.log("Profile updated successfully");
-        toast.success("Email enregistré avec succès");
 
+        // Mise à jour de la réponse au quiz
+        try {
+          await updateQuizResponse(profileId, { email });
+          console.log("Profile and quiz response updated successfully with email");
+          toast.success("Email enregistré avec succès");
+        } catch (error) {
+          console.error("Error updating quiz response:", error);
+          toast.error("Une erreur est survenue lors de la mise à jour de votre profil");
+          throw error;
+        }
+
+        // Récupération du rapport
         console.log("Fetching report for profile:", profileId);
         const { data: reportData, error: reportError } = await supabase
           .from('reports')

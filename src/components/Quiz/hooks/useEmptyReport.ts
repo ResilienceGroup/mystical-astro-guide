@@ -22,7 +22,7 @@ export const useEmptyReport = () => {
       // Create empty report
       const { data: reportData, error: reportError } = await supabase
         .from('reports')
-        .insert({
+        .insert([{
           profile_id: quizData.profileId,
           content: {},
           personality_analysis: "Analyse en cours de génération...",
@@ -31,7 +31,7 @@ export const useEmptyReport = () => {
           love_insights: "Analyse en cours de génération...",
           career_guidance: "Analyse en cours de génération...",
           spiritual_growth: "Analyse en cours de génération..."
-        })
+        }])
         .select()
         .single();
 

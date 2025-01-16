@@ -23,7 +23,7 @@ export const useReportGeneration = () => {
           },
           body: JSON.stringify({
             name: quizData.name,
-            birthDate: quizData.birthDate,
+            birthDate: quizData.birthDate?.toISOString(),
             birthPlace: quizData.birthPlace,
             birthTime: quizData.birthTime,
             profileId: quizData.profileId,
@@ -39,10 +39,12 @@ export const useReportGeneration = () => {
       }
 
       console.log("Report generation initiated successfully");
+      toast.success("Génération de votre thème astral en cours");
 
     } catch (error) {
       console.error('Error in generateReportContent:', error);
       toast.error("Une erreur est survenue lors de la génération du rapport");
+      throw error;
     }
   };
 

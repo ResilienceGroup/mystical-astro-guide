@@ -10,6 +10,18 @@ export const useQuizData = () => {
     try {
       console.log('Creating initial quiz response for profile:', profileId);
       
+      // Check if response already exists
+      const { data: existingResponse } = await supabase
+        .from('quiz_responses')
+        .select()
+        .eq('profile_id', profileId)
+        .maybeSingle();
+
+      if (existingResponse) {
+        console.log('Quiz response already exists:', existingResponse);
+        return existingResponse;
+      }
+
       const { data: response, error } = await supabase
         .from('quiz_responses')
         .insert([{ profile_id: profileId }])
@@ -35,16 +47,11 @@ export const useQuizData = () => {
     try {
       console.log('Updating quiz response for profile:', profileId, 'with data:', data);
       
-      const { data: existingResponse, error: fetchError } = await supabase
+      const { data: existingResponse } = await supabase
         .from('quiz_responses')
         .select()
         .eq('profile_id', profileId)
         .maybeSingle();
-
-      if (fetchError) {
-        console.error('Error fetching existing response:', fetchError);
-        throw fetchError;
-      }
 
       if (!existingResponse) {
         console.log('No existing response found, creating new one');
@@ -64,7 +71,7 @@ export const useQuizData = () => {
 
       const { error: updateError } = await supabase
         .from('quiz_responses')
-        .update(quizResponseData)
+        .upsert([quizResponseData])
         .eq('profile_id', profileId);
 
       if (updateError) {

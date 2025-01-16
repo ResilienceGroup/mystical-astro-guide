@@ -35,6 +35,58 @@ export const QuizStep1 = ({ onNext, onDataUpdate, data }: QuizStep1Props) => {
     return profile.id;
   };
 
+  const createQuizResponse = async (profileId: string) => {
+    console.log('Creating quiz response for profile:', profileId);
+    
+    const { data: response, error } = await supabase
+      .from('quiz_responses')
+      .insert([{ 
+        profile_id: profileId,
+        updated_at: new Date().toISOString()
+      }])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating quiz response:', error);
+      toast.error(`Erreur lors de la création du questionnaire: ${error.message}`);
+      throw error;
+    }
+
+    console.log('Quiz response created successfully:', response);
+    toast.success("Questionnaire créé avec succès");
+    return response;
+  };
+
+  const createEmptyReport = async (profileId: string) => {
+    console.log('Creating empty report for profile:', profileId);
+    
+    const { data: report, error } = await supabase
+      .from('reports')
+      .insert([{
+        profile_id: profileId,
+        content: {},
+        personality_analysis: "Analyse en cours de génération...",
+        opportunities: "Analyse en cours de génération...",
+        challenges: "Analyse en cours de génération...",
+        love_insights: "Analyse en cours de génération...",
+        career_guidance: "Analyse en cours de génération...",
+        spiritual_growth: "Analyse en cours de génération..."
+      }])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating empty report:', error);
+      toast.error(`Erreur lors de la création du rapport: ${error.message}`);
+      throw error;
+    }
+
+    console.log('Empty report created successfully:', report);
+    toast.success("Rapport initial créé avec succès");
+    return report;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || isSubmitting) return;
@@ -45,13 +97,15 @@ export const QuizStep1 = ({ onNext, onDataUpdate, data }: QuizStep1Props) => {
       const profileId = await createProfile(name);
       
       if (profileId) {
-        try {
-          await onDataUpdate({ name, profileId });
-          onNext();
-        } catch (error) {
-          console.error('Error updating quiz data:', error);
-          toast.error("Échec de la mise à jour des données du quiz");
-        }
+        // Create quiz response
+        await createQuizResponse(profileId);
+        
+        // Create empty report
+        await createEmptyReport(profileId);
+
+        // Update quiz data with profile ID and name
+        await onDataUpdate({ name, profileId });
+        onNext();
       } else {
         console.error('No profile ID returned from createProfile');
         toast.error("Échec de la création du profil");

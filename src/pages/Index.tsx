@@ -20,6 +20,9 @@ const Index = () => {
           <Link to="/legal" className="text-sm text-gray-400 hover:text-white">
             Mentions légales & CGU
           </Link>
+          <Link to="/privacy" className="text-sm text-gray-400 hover:text-white">
+            Politique de confidentialité
+          </Link>
           <Link to="/support" className="text-sm text-gray-400 hover:text-white">
             Support
           </Link>

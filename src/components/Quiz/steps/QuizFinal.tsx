@@ -36,9 +36,6 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
         }
         console.log("Profile updated successfully");
 
-        // Attendre un peu pour s'assurer que le rapport a été généré
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
         console.log("Fetching report for profile:", data.profileId);
         const { data: reportData, error: reportError } = await supabase
           .from('reports')

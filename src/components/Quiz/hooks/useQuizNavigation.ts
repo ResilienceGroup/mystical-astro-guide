@@ -11,18 +11,9 @@ export const useQuizNavigation = () => {
 
   const generateReport = async (quizData: QuizData) => {
     try {
-      console.log('Creating empty report for profile:', quizData.profileId);
-      const { data: existingReport } = await supabase
-        .from('reports')
-        .select()
-        .eq('profile_id', quizData.profileId)
-        .maybeSingle();
-
-      if (existingReport) {
-        console.log('Report already exists for this profile');
-        return;
-      }
-
+      console.log('Creating report for profile:', quizData.profileId);
+      
+      // Create empty report first
       const { data: reportData, error: reportError } = await supabase
         .from('reports')
         .insert({
@@ -44,6 +35,7 @@ export const useQuizNavigation = () => {
       }
       console.log('Empty report created:', reportData);
 
+      // Call OpenAI to generate report content
       console.log('Calling generate-report function with data:', {
         name: quizData.name,
         birthDate: quizData.birthDate,
@@ -95,6 +87,7 @@ export const useQuizNavigation = () => {
     const nextStep = Math.min(step + 1, totalSteps);
     setStep(nextStep);
     
+    // Start report generation after step 4
     if (step === 4) {
       await generateReport(quizData);
     }

@@ -5,7 +5,7 @@ import { isValid } from "date-fns";
 import { BirthDateInput } from "./birthdate/BirthDateInput";
 import { ZodiacDisplay } from "./birthdate/ZodiacDisplay";
 import { toast } from "sonner";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 interface QuizStep2Props {
   onNext: () => void;

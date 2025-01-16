@@ -31,6 +31,7 @@ export const QuizStep1 = ({ onNext, onDataUpdate, data }: QuizStep1Props) => {
     }
     
     console.log('Profile created successfully:', profile);
+    toast.success("Profil créé avec succès");
     return profile.id;
   };
 
@@ -45,7 +46,6 @@ export const QuizStep1 = ({ onNext, onDataUpdate, data }: QuizStep1Props) => {
       
       if (profileId) {
         await onDataUpdate({ name, profileId });
-        toast.success("Profil créé avec succès");
         onNext();
       } else {
         toast.error("Échec de la création du profil");

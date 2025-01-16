@@ -23,6 +23,7 @@ export const useQuizResponses = () => {
       }
 
       console.log('Quiz response created successfully:', response);
+      toast.success("Profil créé avec succès");
       return response;
     } catch (error) {
       console.error('Error in createQuizResponse:', error);
@@ -57,7 +58,26 @@ export const useQuizResponses = () => {
       }
       
       console.log('Quiz response updated successfully');
-      toast.success("Réponses enregistrées");
+      
+      // Show specific success messages based on which field was updated
+      if (data.birthPlace) {
+        toast.success("Lieu de naissance enregistré avec succès");
+      }
+      if (data.birthDate) {
+        toast.success("Date de naissance enregistrée avec succès");
+      }
+      if (data.birthTime) {
+        toast.success("Heure de naissance enregistrée avec succès");
+      }
+      if (data.relationshipStatus) {
+        toast.success("Statut relationnel enregistré avec succès");
+      }
+      if (data.element) {
+        toast.success("Élément naturel enregistré avec succès");
+      }
+      if (data.goals) {
+        toast.success("Objectifs enregistrés avec succès");
+      }
     } catch (error) {
       console.error('Error in updateQuizResponse:', error);
       toast.error("Une erreur est survenue lors de l'enregistrement des réponses");

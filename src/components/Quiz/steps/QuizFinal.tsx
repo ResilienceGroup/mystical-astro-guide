@@ -15,36 +15,6 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
   const [email, setEmail] = useState("");
   const [reportData, setReportData] = useState<ReportSectionType[] | null>(null);
 
-  const generateReportData = (name: string): ReportSectionType[] => {
-    return [
-      {
-        title: "Ton Analyse Personnelle",
-        content: `${name}, voici ton analyse astrologique basée sur ta date de naissance. Les aspects planétaires révèlent une période intéressante pour ton développement personnel et tes relations.`,
-        planetPosition: "Soleil en Scorpion, Lune en Balance"
-      },
-      {
-        title: "Opportunités à Venir",
-        content: "Les prochains mois seront particulièrement favorables pour ton développement professionnel. Jupiter en transit dans ta maison des opportunités ouvre de nouvelles portes.",
-        dates: [
-          {
-            period: "15 JAN — 22 JAN",
-            focus: "Période clé",
-            category: "CARRIÈRE",
-            description: "Une opportunité professionnelle importante se présente. Reste attentif aux signes.",
-            planetaryInfo: "Jupiter en trigone avec ton Soleil natal"
-          }
-        ],
-        isBlurred: true
-      },
-      {
-        title: "Amour et Relations",
-        content: "Vénus influence positivement ta sphère relationnelle. C'est le moment idéal pour approfondir tes relations existantes ou faire de nouvelles rencontres significatives.",
-        planetPosition: "Vénus en Taureau",
-        isBlurred: true
-      }
-    ];
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (email && data.profileId) {
@@ -55,28 +25,59 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
           .eq('id', data.profileId);
 
         if (profileError) throw profileError;
-        
-        const reportContent = generateReportData(data.name || '');
-        
-        if (!isJsonCompatible(reportContent)) {
-          throw new Error("Report content is not JSON compatible");
-        }
 
-        const { error: reportError } = await supabase
+        // Fetch the existing report for this profile
+        const { data: reportData, error: reportError } = await supabase
           .from('reports')
-          .insert({
-            profile_id: data.profileId,
-            content: reportContent
-          });
+          .select('*')
+          .eq('profile_id', data.profileId)
+          .maybeSingle();
 
         if (reportError) throw reportError;
+
+        if (!reportData) {
+          throw new Error("No report found");
+        }
+
+        // Transform the report data into sections
+        const sections: ReportSectionType[] = [
+          {
+            title: "Ton Analyse Personnelle",
+            content: reportData.personality_analysis || "Analyse en cours de génération...",
+          },
+          {
+            title: "Opportunités à Venir",
+            content: reportData.opportunities || "Analyse en cours de génération...",
+            isBlurred: true
+          },
+          {
+            title: "Défis et Croissance",
+            content: reportData.challenges || "Analyse en cours de génération...",
+            isBlurred: true
+          },
+          {
+            title: "Amour et Relations",
+            content: reportData.love_insights || "Analyse en cours de génération...",
+            isBlurred: true
+          },
+          {
+            title: "Orientation Professionnelle",
+            content: reportData.career_guidance || "Analyse en cours de génération...",
+            isBlurred: true
+          },
+          {
+            title: "Développement Spirituel",
+            content: reportData.spiritual_growth || "Analyse en cours de génération...",
+            isBlurred: true
+          }
+        ];
         
         onDataUpdate({ email });
-        setReportData(reportContent);
+        setReportData(sections);
         toast.success("Rapport généré avec succès !");
 
       } catch (error) {
-        console.error("Error updating profile or generating report:", error);
+        console.error("Error updating profile or fetching report:", error);
         toast.error("Une erreur est survenue lors de la génération du rapport");
       }
     }

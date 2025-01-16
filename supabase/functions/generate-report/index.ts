@@ -22,14 +22,7 @@ serve(async (req) => {
       throw new Error('Missing required profileId or reportId');
     }
 
-    // Initialize Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    console.log('Initialized Supabase client');
-
-    // Generate report using OpenAI
+    // Test OpenAI API call with minimal data
     console.log('Calling OpenAI API with model: gpt-4o-mini');
     const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -42,11 +35,25 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'Tu es un expert en astrologie qui fournit des lectures astrologiques personnalisées en français. Formate ta réponse en JSON avec les champs suivants : personality_analysis, opportunities, challenges, love_insights, career_guidance, et spiritual_growth.'
+            content: `Tu es un expert en astrologie qui fournit des lectures astrologiques personnalisées en français. 
+            Formate ta réponse en JSON avec les champs suivants uniquement:
+            {
+              "personality_analysis": "analyse détaillée de la personnalité",
+              "opportunities": "opportunités à venir",
+              "challenges": "défis à surmonter",
+              "love_insights": "perspectives amoureuses",
+              "career_guidance": "conseils de carrière",
+              "spiritual_growth": "développement spirituel"
+            }`
           },
           {
             role: 'user',
-            content: `Génère un rapport astrologique en français pour ${name}, né(e) le ${birthDate} à ${birthTime} à ${birthPlace}. Inclus une analyse de personnalité, les opportunités, les défis, les perspectives amoureuses, l'orientation professionnelle et la croissance spirituelle.`
+            content: `Génère un rapport astrologique test pour ${name || 'Jean'}, 
+            né(e) le ${birthDate || '2000-01-01'} à ${birthTime || '12:00'} 
+            à ${birthPlace || 'Paris'}. 
+            Inclus une analyse de personnalité, les opportunités, 
+            les défis, les perspectives amoureuses, 
+            l'orientation professionnelle et la croissance spirituelle.`
           }
         ],
         temperature: 0.7,
@@ -73,12 +80,19 @@ serve(async (req) => {
     let reportContent;
     try {
       reportContent = JSON.parse(openAIData.choices[0].message.content);
-      console.log('Successfully parsed report content');
+      console.log('Successfully parsed report content:', reportContent);
     } catch (error) {
       console.error('Error parsing OpenAI response:', error);
       console.log('Raw content:', openAIData.choices[0].message.content);
       throw new Error('Failed to parse OpenAI response as JSON');
     }
+
+    // Initialize Supabase client
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    console.log('Initialized Supabase client');
 
     // Update report in database
     const { error: updateError } = await supabase
@@ -101,7 +115,11 @@ serve(async (req) => {
 
     console.log('Report updated successfully in database');
 
-    return new Response(JSON.stringify({ success: true }), {
+    return new Response(JSON.stringify({ 
+      success: true,
+      message: 'Report generated and saved successfully',
+      reportContent 
+    }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {

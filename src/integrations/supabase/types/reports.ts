@@ -1,3 +1,5 @@
+import { Json } from './base';
+
 export interface ReportsTable {
   Row: {
     career_guidance: string | null

@@ -6,6 +6,10 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
+import { ProfilesTable } from './profiles';
+import { QuizResponsesTable } from './quiz-responses';
+import { ReportsTable } from './reports';
+
 export type Database = {
   public: {
     Tables: {

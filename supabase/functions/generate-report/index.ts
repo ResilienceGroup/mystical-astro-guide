@@ -30,6 +30,7 @@ serve(async (req) => {
     console.log('Initialized Supabase client');
 
     // Generate report using OpenAI
+    console.log('Calling OpenAI API with model: gpt-4o-mini');
     const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -41,17 +42,19 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are an expert astrologer providing personalized astrological readings in French. Format your response in JSON with the following fields: personality_analysis, opportunities, challenges, love_insights, career_guidance, and spiritual_growth.'
+            content: 'Tu es un expert en astrologie qui fournit des lectures astrologiques personnalisées en français. Formate ta réponse en JSON avec les champs suivants : personality_analysis, opportunities, challenges, love_insights, career_guidance, et spiritual_growth.'
           },
           {
             role: 'user',
-            content: `Generate an astrological report in French for ${name}, born on ${birthDate} at ${birthTime} in ${birthPlace}. Include personality analysis, opportunities, challenges, love insights, career guidance, and spiritual growth.`
+            content: `Génère un rapport astrologique en français pour ${name}, né(e) le ${birthDate} à ${birthTime} à ${birthPlace}. Inclus une analyse de personnalité, les opportunités, les défis, les perspectives amoureuses, l'orientation professionnelle et la croissance spirituelle.`
           }
         ],
+        temperature: 0.7,
+        max_tokens: 2000
       }),
     });
 
-    console.log('OpenAI API called');
+    console.log('OpenAI API response status:', openAIResponse.status);
 
     if (!openAIResponse.ok) {
       const errorText = await openAIResponse.text();
@@ -62,8 +65,20 @@ serve(async (req) => {
     const openAIData = await openAIResponse.json();
     console.log('Received OpenAI response');
 
-    const reportContent = JSON.parse(openAIData.choices[0].message.content);
-    console.log('Parsed report content');
+    if (!openAIData.choices?.[0]?.message?.content) {
+      console.error('Invalid OpenAI response format:', openAIData);
+      throw new Error('Invalid response format from OpenAI');
+    }
+
+    let reportContent;
+    try {
+      reportContent = JSON.parse(openAIData.choices[0].message.content);
+      console.log('Successfully parsed report content');
+    } catch (error) {
+      console.error('Error parsing OpenAI response:', error);
+      console.log('Raw content:', openAIData.choices[0].message.content);
+      throw new Error('Failed to parse OpenAI response as JSON');
+    }
 
     // Update report in database
     const { error: updateError } = await supabase

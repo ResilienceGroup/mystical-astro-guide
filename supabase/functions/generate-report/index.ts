@@ -13,12 +13,21 @@ serve(async (req) => {
   }
 
   try {
+    console.log('Starting generate-report function');
     const { name, birthDate, birthPlace, birthTime, profileId, reportId } = await req.json();
+    
+    console.log('Received data:', { name, birthDate, birthPlace, birthTime, profileId, reportId });
+
+    if (!profileId || !reportId) {
+      throw new Error('Missing required profileId or reportId');
+    }
 
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
+
+    console.log('Initialized Supabase client');
 
     // Generate report using OpenAI
     const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -42,8 +51,19 @@ serve(async (req) => {
       }),
     });
 
+    console.log('OpenAI API called');
+
+    if (!openAIResponse.ok) {
+      const errorText = await openAIResponse.text();
+      console.error('OpenAI API error:', errorText);
+      throw new Error(`OpenAI API error: ${openAIResponse.status} ${errorText}`);
+    }
+
     const openAIData = await openAIResponse.json();
+    console.log('Received OpenAI response');
+
     const reportContent = JSON.parse(openAIData.choices[0].message.content);
+    console.log('Parsed report content');
 
     // Update report in database
     const { error: updateError } = await supabase
@@ -54,11 +74,17 @@ serve(async (req) => {
         challenges: reportContent.challenges,
         love_insights: reportContent.love_insights,
         career_guidance: reportContent.career_guidance,
-        spiritual_growth: reportContent.spiritual_growth
+        spiritual_growth: reportContent.spiritual_growth,
+        content: reportContent
       })
       .eq('id', reportId);
 
-    if (updateError) throw updateError;
+    if (updateError) {
+      console.error('Error updating report:', updateError);
+      throw updateError;
+    }
+
+    console.log('Report updated successfully in database');
 
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

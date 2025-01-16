@@ -4,6 +4,11 @@ import { toast } from "sonner";
 export const useReportGeneration = () => {
   const generateReportContent = async (quizData: QuizData, reportId: string) => {
     try {
+      if (!quizData.profileId || !reportId) {
+        console.error('Missing required data:', { profileId: quizData.profileId, reportId });
+        throw new Error('Missing required data for report generation');
+      }
+
       console.log('Calling generate-report function with data:', {
         name: quizData.name,
         birthDate: quizData.birthDate,
@@ -38,7 +43,8 @@ export const useReportGeneration = () => {
         throw new Error(`Failed to generate report: ${response.status} ${responseText}`);
       }
 
-      console.log("Report generation initiated successfully");
+      const result = await response.json();
+      console.log("Report generation initiated successfully:", result);
       toast.success("Génération de votre thème astral en cours");
 
     } catch (error) {

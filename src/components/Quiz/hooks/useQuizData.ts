@@ -9,7 +9,27 @@ export const useQuizData = () => {
   const createProfile = async (name: string) => {
     try {
       console.log('Creating profile with name:', name);
-      const { data, error } = await supabase
+      
+      // Vérifier si un profil avec ce nom existe déjà
+      const { data: existingProfile, error: checkError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('name', name)
+        .single();
+
+      if (checkError && checkError.code !== 'PGRST116') {
+        console.error('Error checking existing profile:', checkError);
+        toast.error("Une erreur est survenue lors de la vérification du profil");
+        throw checkError;
+      }
+
+      if (existingProfile) {
+        console.log('Profile already exists:', existingProfile);
+        return existingProfile.id;
+      }
+
+      // Créer un nouveau profil
+      const { data: newProfile, error } = await supabase
         .from('profiles')
         .insert([{ name }])
         .select()
@@ -21,8 +41,8 @@ export const useQuizData = () => {
         throw error;
       }
       
-      console.log('Profile created successfully:', data);
-      return data.id;
+      console.log('Profile created successfully:', newProfile);
+      return newProfile.id;
     } catch (error) {
       console.error('Error in createProfile:', error);
       return null;
@@ -44,34 +64,29 @@ export const useQuizData = () => {
         throw fetchError;
       }
 
+      const quizResponseData = {
+        profile_id: profileId,
+        birth_place: data.birthPlace,
+        birth_date: data.birthDate?.toISOString(),
+        birth_time: data.birthTime,
+        relationship_status: data.relationshipStatus,
+        element: data.element,
+        goals: data.goals,
+        updated_at: new Date().toISOString()
+      };
+
       let result;
       if (existingResponse) {
         console.log('Updating existing response');
         result = await supabase
           .from('quiz_responses')
-          .update({
-            birth_place: data.birthPlace,
-            birth_date: data.birthDate?.toISOString(),
-            birth_time: data.birthTime,
-            relationship_status: data.relationshipStatus,
-            element: data.element,
-            goals: data.goals,
-            updated_at: new Date().toISOString()
-          })
+          .update(quizResponseData)
           .eq('profile_id', profileId);
       } else {
         console.log('Creating new response');
         result = await supabase
           .from('quiz_responses')
-          .insert({
-            profile_id: profileId,
-            birth_place: data.birthPlace,
-            birth_date: data.birthDate?.toISOString(),
-            birth_time: data.birthTime,
-            relationship_status: data.relationshipStatus,
-            element: data.element,
-            goals: data.goals
-          });
+          .insert([quizResponseData]);
       }
 
       if (result.error) {

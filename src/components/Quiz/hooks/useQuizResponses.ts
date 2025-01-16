@@ -67,9 +67,13 @@ export const useQuizResponses = () => {
         updated_at: new Date().toISOString()
       };
 
+      // Use upsert instead of insert to handle both creation and update
       const { error: updateError } = await supabase
         .from('quiz_responses')
-        .upsert([quizResponseData]);
+        .upsert([quizResponseData], {
+          onConflict: 'profile_id',
+          ignoreDuplicates: false
+        });
 
       if (updateError) {
         console.error('Error updating quiz response:', updateError);

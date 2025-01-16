@@ -7,18 +7,26 @@ export const useQuizResponses = () => {
     try {
       console.log('Creating quiz response for profile:', profileId);
       
-      const { data: existingResponse } = await supabase
+      // First check if a response already exists
+      const { data: existingResponse, error: fetchError } = await supabase
         .from('quiz_responses')
         .select()
         .eq('profile_id', profileId)
-        .single();
+        .maybeSingle();
+
+      if (fetchError) {
+        console.error('Error checking existing quiz response:', fetchError);
+        toast.error(`Erreur lors de la vérification du profil: ${fetchError.message}`);
+        throw fetchError;
+      }
 
       if (existingResponse) {
         console.log('Quiz response already exists for profile:', profileId);
         return existingResponse;
       }
 
-      const { data: response, error } = await supabase
+      // If no response exists, create a new one
+      const { data: response, error: insertError } = await supabase
         .from('quiz_responses')
         .insert([{ 
           profile_id: profileId,
@@ -27,10 +35,10 @@ export const useQuizResponses = () => {
         .select()
         .single();
 
-      if (error) {
-        console.error('Error creating quiz response:', error);
-        toast.error(`Erreur lors de la création du profil: ${error.message}`);
-        throw error;
+      if (insertError) {
+        console.error('Error creating quiz response:', insertError);
+        toast.error(`Erreur lors de la création du profil: ${insertError.message}`);
+        throw insertError;
       }
 
       console.log('Quiz response created successfully:', response);

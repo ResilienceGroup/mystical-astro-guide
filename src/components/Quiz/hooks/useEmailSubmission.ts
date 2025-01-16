@@ -17,10 +17,7 @@ export const useEmailSubmission = (profileId: string | undefined, onDataUpdate: 
         console.log("Updating profile with email");
         const { error: profileError } = await supabase
           .from('profiles')
-          .update({ 
-            email,
-            updated_at: new Date().toISOString()
-          })
+          .update({ email })
           .eq('id', profileId);
 
         if (profileError) {

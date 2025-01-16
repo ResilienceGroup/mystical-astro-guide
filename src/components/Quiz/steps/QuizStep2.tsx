@@ -5,6 +5,7 @@ import { useState } from "react";
 import { isValid } from "date-fns";
 import { BirthDateInput } from "./birthdate/BirthDateInput";
 import { ZodiacDisplay } from "./birthdate/ZodiacDisplay";
+import { toast } from "sonner";
 
 interface QuizStep2Props {
   onNext: () => void;
@@ -16,6 +17,7 @@ export const QuizStep2 = ({ onNext, onDataUpdate, data }: QuizStep2Props) => {
   const [birthDate, setBirthDate] = useState<Date | null>(data.birthDate || null);
   const [zodiacSign, setZodiacSign] = useState<typeof zodiac[0] | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const getZodiacSign = (date: Date) => {
     const month = date.getMonth() + 1;
@@ -47,6 +49,7 @@ export const QuizStep2 = ({ onNext, onDataUpdate, data }: QuizStep2Props) => {
   };
 
   const handleDateChange = (newDate: Date) => {
+    console.log('Date selected:', newDate);
     setBirthDate(newDate);
     setIsAnimating(true);
     
@@ -57,11 +60,28 @@ export const QuizStep2 = ({ onNext, onDataUpdate, data }: QuizStep2Props) => {
     }, 500);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (birthDate && isValid(birthDate)) {
-      onDataUpdate({ birthDate });
+    
+    if (!birthDate || !isValid(birthDate)) {
+      console.error('Invalid birth date');
+      toast.error("Date de naissance invalide");
+      return;
+    }
+
+    setIsSubmitting(true);
+    console.log('Submitting birth date:', birthDate);
+
+    try {
+      await onDataUpdate({ birthDate });
+      console.log('Birth date updated successfully');
       onNext();
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
+      console.error('Error updating birth date:', error);
+      toast.error(`Erreur lors de l'enregistrement de la date de naissance: ${errorMessage}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -87,9 +107,9 @@ export const QuizStep2 = ({ onNext, onDataUpdate, data }: QuizStep2Props) => {
       <Button
         type="submit"
         className="w-full bg-primary hover:bg-primary/90"
-        disabled={!birthDate || !isValid(birthDate)}
+        disabled={!birthDate || !isValid(birthDate) || isSubmitting}
       >
-        Continuer
+        {isSubmitting ? "Enregistrement..." : "Continuer"}
       </Button>
     </form>
   );

@@ -18,7 +18,7 @@ export const useQuizResponses = () => {
 
       if (error) {
         console.error('Error creating quiz response:', error);
-        toast.error("Une erreur est survenue lors de la création de votre profil");
+        toast.error(`Erreur lors de la création du profil: ${error.message}`);
         throw error;
       }
 
@@ -53,11 +53,11 @@ export const useQuizResponses = () => {
 
       if (updateError) {
         console.error('Error updating quiz response:', updateError);
-        toast.error("Une erreur est survenue lors de l'enregistrement des réponses");
+        toast.error(`Erreur lors de l'enregistrement: ${updateError.message}`);
         throw updateError;
       }
       
-      console.log('Quiz response updated successfully');
+      console.log('Quiz response updated successfully with data:', quizResponseData);
       
       // Show specific success messages based on which field was updated
       if (data.birthPlace) {
@@ -79,8 +79,10 @@ export const useQuizResponses = () => {
         toast.success("Objectifs enregistrés avec succès");
       }
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
       console.error('Error in updateQuizResponse:', error);
-      toast.error("Une erreur est survenue lors de l'enregistrement des réponses");
+      toast.error(`Une erreur est survenue lors de l'enregistrement: ${errorMessage}`);
+      throw error;
     }
   };
 

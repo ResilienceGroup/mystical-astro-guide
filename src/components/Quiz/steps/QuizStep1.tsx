@@ -26,7 +26,7 @@ export const QuizStep1 = ({ onNext, onDataUpdate, data }: QuizStep1Props) => {
 
     if (error) {
       console.error('Error creating profile:', error);
-      toast.error("Une erreur est survenue lors de la création du profil");
+      toast.error(`Erreur lors de la création du profil: ${error.message}`);
       throw error;
     }
     
@@ -45,14 +45,21 @@ export const QuizStep1 = ({ onNext, onDataUpdate, data }: QuizStep1Props) => {
       const profileId = await createProfile(name);
       
       if (profileId) {
-        await onDataUpdate({ name, profileId });
-        onNext();
+        try {
+          await onDataUpdate({ name, profileId });
+          onNext();
+        } catch (error) {
+          console.error('Error updating quiz data:', error);
+          toast.error("Échec de la mise à jour des données du quiz");
+        }
       } else {
+        console.error('No profile ID returned from createProfile');
         toast.error("Échec de la création du profil");
       }
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
       console.error('Error in handleSubmit:', error);
-      toast.error("Une erreur est survenue");
+      toast.error(`Une erreur est survenue: ${errorMessage}`);
     } finally {
       setIsSubmitting(false);
     }

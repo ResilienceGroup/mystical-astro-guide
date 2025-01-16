@@ -16,9 +16,12 @@ const Index = () => {
       <AISection />
       <FAQ />
       <footer className="py-8 px-4 border-t border-white/10">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-4xl mx-auto text-center space-x-4">
           <Link to="/legal" className="text-sm text-gray-400 hover:text-white">
             Mentions légales & CGU
+          </Link>
+          <Link to="/support" className="text-sm text-gray-400 hover:text-white">
+            Support
           </Link>
         </div>
       </footer>

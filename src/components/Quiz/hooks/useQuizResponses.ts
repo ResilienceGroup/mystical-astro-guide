@@ -61,9 +61,7 @@ export const useQuizResponses = () => {
 
       const { error: updateError } = await supabase
         .from('quiz_responses')
-        .upsert([quizResponseData], {
-          onConflict: 'profile_id'
-        });
+        .upsert([quizResponseData]);
 
       if (updateError) {
         console.error('Error updating quiz response:', updateError);

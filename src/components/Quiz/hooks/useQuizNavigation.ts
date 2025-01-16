@@ -22,7 +22,7 @@ export const useQuizNavigation = () => {
 
       if (existingReport) {
         console.log('Report already exists for this profile');
-        return;
+        return existingReport;
       }
 
       // Create empty report
@@ -45,10 +45,14 @@ export const useQuizNavigation = () => {
         console.error('Error creating empty report:', reportError);
         throw reportError;
       }
+
       console.log('Empty report created:', reportData);
+      toast.success("Nous commençons les calculs de votre thème astral.");
       return reportData;
+
     } catch (error) {
       console.error('Error in createEmptyReport:', error);
+      toast.error("Une erreur est survenue lors de la création de votre thème astral");
       throw error;
     }
   };
@@ -90,7 +94,7 @@ export const useQuizNavigation = () => {
       }
 
       console.log("Report generation initiated successfully");
-      toast.success("Génération du rapport initiée");
+
     } catch (error) {
       console.error('Error in generateReportContent:', error);
       toast.error("Une erreur est survenue lors de la génération du rapport");
@@ -106,7 +110,7 @@ export const useQuizNavigation = () => {
     const nextStep = Math.min(step + 1, totalSteps);
     setStep(nextStep);
     
-    // Create empty report and start generation after step 4
+    // Create empty report and start generation at step 4
     if (step === 4) {
       try {
         const report = await createEmptyReport(quizData);
@@ -115,7 +119,6 @@ export const useQuizNavigation = () => {
         }
       } catch (error) {
         console.error('Error in report creation process:', error);
-        toast.error("Une erreur est survenue lors de la création du rapport");
       }
     }
   };

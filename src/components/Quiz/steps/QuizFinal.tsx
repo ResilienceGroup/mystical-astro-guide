@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { EmailForm } from "../components/EmailForm";
 import { ReportSection } from "../components/ReportSection";
-import { ReportSection as ReportSectionType, isJsonCompatible } from "../types/report";
+import { ReportSection as ReportSectionType } from "../types/report";
 
 interface QuizFinalProps {
   onDataUpdate: (data: Partial<QuizData>) => void;
@@ -19,6 +19,7 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
     e.preventDefault();
     if (email && data.profileId) {
       try {
+        // Mettre à jour le profil avec l'email
         const { error: profileError } = await supabase
           .from('profiles')
           .update({ email })
@@ -26,7 +27,7 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
 
         if (profileError) throw profileError;
 
-        // Fetch the existing report for this profile
+        // Récupérer le rapport existant
         const { data: reportData, error: reportError } = await supabase
           .from('reports')
           .select('*')
@@ -36,10 +37,10 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
         if (reportError) throw reportError;
 
         if (!reportData) {
-          throw new Error("No report found");
+          throw new Error("Aucun rapport trouvé");
         }
 
-        // Transform the report data into sections
+        // Transformer les données du rapport en sections
         const sections: ReportSectionType[] = [
           {
             title: "Ton Analyse Personnelle",
@@ -77,7 +78,7 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
         toast.success("Rapport généré avec succès !");
 
       } catch (error) {
-        console.error("Error updating profile or fetching report:", error);
+        console.error("Erreur lors de la mise à jour du profil ou de la récupération du rapport:", error);
         toast.error("Une erreur est survenue lors de la génération du rapport");
       }
     }
@@ -86,13 +87,11 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
   return (
     <div className="space-y-6">
       {!reportData ? (
-        <div className="space-y-6">
-          <EmailForm 
-            email={email}
-            setEmail={setEmail}
-            onSubmit={handleSubmit}
-          />
-        </div>
+        <EmailForm 
+          email={email}
+          setEmail={setEmail}
+          onSubmit={handleSubmit}
+        />
       ) : (
         <div className="space-y-6">
           <div className="text-center space-y-4">

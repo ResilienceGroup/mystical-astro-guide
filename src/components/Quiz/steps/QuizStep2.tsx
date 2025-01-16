@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { QuizData } from "../types/quiz";
 import { zodiac } from "@/lib/zodiac";
-import { useState } from "react";
 import { isValid } from "date-fns";
 import { BirthDateInput } from "./birthdate/BirthDateInput";
 import { ZodiacDisplay } from "./birthdate/ZodiacDisplay";
 import { toast } from "sonner";
+import { useCallback } from "react";
 
 interface QuizStep2Props {
   onNext: () => void;
@@ -19,7 +19,7 @@ export const QuizStep2 = ({ onNext, onDataUpdate, data }: QuizStep2Props) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const getZodiacSign = (date: Date) => {
+  const getZodiacSign = useCallback((date: Date) => {
     const month = date.getMonth() + 1;
     const day = date.getDate();
 
@@ -46,9 +46,9 @@ export const QuizStep2 = ({ onNext, onDataUpdate, data }: QuizStep2Props) => {
       }
       return dateNum >= startNum && dateNum <= endNum;
     }) || null;
-  };
+  }, []);
 
-  const handleDateChange = (newDate: Date) => {
+  const handleDateChange = useCallback((newDate: Date) => {
     console.log('Date selected:', newDate);
     setBirthDate(newDate);
     setIsAnimating(true);
@@ -58,7 +58,7 @@ export const QuizStep2 = ({ onNext, onDataUpdate, data }: QuizStep2Props) => {
       setZodiacSign(sign);
       setIsAnimating(false);
     }, 500);
-  };
+  }, [getZodiacSign]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,6 +75,7 @@ export const QuizStep2 = ({ onNext, onDataUpdate, data }: QuizStep2Props) => {
     try {
       await onDataUpdate({ birthDate });
       console.log('Birth date updated successfully');
+      toast.success("Date de naissance enregistrée avec succès");
       onNext();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';

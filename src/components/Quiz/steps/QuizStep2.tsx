@@ -73,9 +73,14 @@ export const QuizStep2 = ({ onNext, onDataUpdate, data }: QuizStep2Props) => {
     console.log('Submitting birth date:', birthDate);
 
     try {
+      if (!data.profileId) {
+        console.error('No profile ID available');
+        toast.error("Erreur: ID de profil manquant");
+        return;
+      }
+
       await onDataUpdate({ birthDate });
       console.log('Birth date updated successfully');
-      toast.success("Date de naissance enregistrée avec succès");
       onNext();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';

@@ -6,49 +6,6 @@ import { toast } from "sonner";
 export const useQuizData = () => {
   const [quizData, setQuizData] = useState<QuizData>({});
 
-  const createProfile = async (name: string) => {
-    try {
-      console.log('Creating profile with name:', name);
-      
-      // Vérifier si un profil avec ce nom existe déjà
-      const { data: existingProfile, error: checkError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('name', name)
-        .single();
-
-      if (checkError && checkError.code !== 'PGRST116') {
-        console.error('Error checking existing profile:', checkError);
-        toast.error("Une erreur est survenue lors de la vérification du profil");
-        throw checkError;
-      }
-
-      if (existingProfile) {
-        console.log('Profile already exists:', existingProfile);
-        return existingProfile.id;
-      }
-
-      // Créer un nouveau profil
-      const { data: newProfile, error } = await supabase
-        .from('profiles')
-        .insert([{ name }])
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Error creating profile:', error);
-        toast.error("Une erreur est survenue lors de la création du profil");
-        throw error;
-      }
-      
-      console.log('Profile created successfully:', newProfile);
-      return newProfile.id;
-    } catch (error) {
-      console.error('Error in createProfile:', error);
-      return null;
-    }
-  };
-
   const updateQuizResponse = async (profileId: string, data: Partial<QuizData>) => {
     try {
       console.log('Updating quiz response for profile:', profileId, 'with data:', data);
@@ -106,34 +63,13 @@ export const useQuizData = () => {
     console.log('Updating quiz data with:', data);
     
     try {
-      if (data.name && !quizData.profileId) {
-        console.log('Creating new profile for name:', data.name);
-        const profileId = await createProfile(data.name);
-        
-        if (profileId) {
-          console.log('Created profile with ID:', profileId);
-          const newData = { ...quizData, ...data, profileId };
-          console.log('Setting new quiz data state:', newData);
-          setQuizData(newData);
-          await updateQuizResponse(profileId, newData);
-          toast.success("Profil créé avec succès");
-        } else {
-          console.error('Failed to create profile');
-          toast.error("Échec de la création du profil");
-          return;
-        }
-      } else if (quizData.profileId) {
-        console.log('Updating existing profile:', quizData.profileId);
+      if (data.profileId) {
         const newData = { ...quizData, ...data };
-        console.log('Setting new quiz data state:', newData);
         setQuizData(newData);
-        await updateQuizResponse(quizData.profileId, newData);
+        await updateQuizResponse(data.profileId, newData);
         toast.success("Réponses enregistrées");
       } else {
-        console.log('Updating local state only');
-        const newData = { ...quizData, ...data };
-        console.log('Setting new quiz data state:', newData);
-        setQuizData(newData);
+        setQuizData(prev => ({ ...prev, ...data }));
       }
     } catch (error) {
       console.error('Error in updateQuizData:', error);

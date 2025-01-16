@@ -55,7 +55,7 @@ export const Hero = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
           <Button
             className="bg-primary hover:bg-primary/90 text-white px-8 py-6 text-lg rounded-full w-full sm:w-auto"
-            onClick={() => navigate('/quiz')}
+            onClick={() => window.open("https://app.moon-astral.com", "_blank")}
           >
             Obtenir ta prédiction personnalisée
           </Button>

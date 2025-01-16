@@ -12,6 +12,7 @@ import { QuizStep5 } from "@/components/Quiz/steps/QuizStep5";
 import { QuizFinal } from "@/components/Quiz/steps/QuizFinal";
 import { LoadingStep } from "@/components/Quiz/steps/LoadingStep";
 import { useNavigate } from "react-router-dom";
+import { QuizInitialStep } from "@/components/Quiz/steps/QuizInitialStep";
 
 export type QuizData = {
   name?: string;
@@ -25,13 +26,13 @@ export type QuizData = {
 }
 
 const Quiz = () => {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);  // Changed from 1 to 0
   const [quizData, setQuizData] = useState<QuizData>({});
   const [showLoader, setShowLoader] = useState(false);
   const navigate = useNavigate();
   
   const totalSteps = 8;
-  const progress = (step / totalSteps) * 100;
+  const progress = ((step) / totalSteps) * 100;  // Adjusted progress calculation
 
   const handleNext = () => {
     if (step === 7) {
@@ -46,20 +47,11 @@ const Quiz = () => {
       setShowLoader(false);
       return;
     }
-    if (step === 1) {
+    if (step === 0) {  // Changed from 1 to 0
       navigate('/');
       return;
     }
-    setStep(prev => Math.max(prev - 1, 1));
-  };
-
-  const handleLoaderComplete = () => {
-    setShowLoader(false);
-    setStep(8);
-  };
-
-  const updateQuizData = (data: Partial<QuizData>) => {
-    setQuizData(prev => ({ ...prev, ...data }));
+    setStep(prev => Math.max(prev - 1, 0));  // Changed from 1 to 0
   };
 
   return (
@@ -103,6 +95,7 @@ const Quiz = () => {
             <LoadingStep onComplete={handleLoaderComplete} />
           ) : (
             <>
+              {step === 0 && <QuizInitialStep onNext={handleNext} />}
               {step === 1 && <QuizStep1 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
               {step === 2 && <QuizStep2 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}
               {step === 3 && <QuizStep6 onNext={handleNext} onDataUpdate={updateQuizData} data={quizData} />}

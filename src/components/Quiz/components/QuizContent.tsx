@@ -8,6 +8,7 @@ import { QuizStep5 } from "../steps/QuizStep5";
 import { QuizFinal } from "../steps/QuizFinal";
 import { LoadingStep } from "../steps/LoadingStep";
 import { QuizData } from "../types/quiz";
+import { QuizInitialStep } from "../steps/QuizInitialStep";
 
 interface QuizContentProps {
   step: number;
@@ -31,6 +32,8 @@ export const QuizContent = ({
   }
 
   switch (step) {
+    case 0:
+      return <QuizInitialStep onNext={onNext} />;
     case 1:
       return <QuizStep1 onNext={onNext} onDataUpdate={onDataUpdate} data={data} />;
     case 2:

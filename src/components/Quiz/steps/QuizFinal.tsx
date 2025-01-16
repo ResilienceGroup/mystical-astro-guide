@@ -14,9 +14,11 @@ interface QuizFinalProps {
 export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
   const [email, setEmail] = useState("");
   const [reportData, setReportData] = useState<ReportSectionType[] | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     console.log("Submitting email:", email, "for profile:", data.profileId);
     
     if (email && data.profileId) {
@@ -33,6 +35,9 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
         }
         console.log("Profile updated successfully");
 
+        // Attendre un peu pour s'assurer que le rapport a été généré
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
         console.log("Fetching report for profile:", data.profileId);
         const { data: reportData, error: reportError } = await supabase
           .from('reports')
@@ -48,7 +53,9 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
         console.log("Report data received:", reportData);
         if (!reportData) {
           console.error("No report found for profile:", data.profileId);
-          throw new Error("Aucun rapport trouvé");
+          toast.error("Le rapport est en cours de génération, veuillez patienter quelques secondes et réessayer");
+          setIsLoading(false);
+          return;
         }
 
         console.log("Transforming report data into sections");
@@ -92,10 +99,13 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
       } catch (error) {
         console.error("Erreur lors de la mise à jour du profil ou de la récupération du rapport:", error);
         toast.error("Une erreur est survenue lors de la génération du rapport");
+      } finally {
+        setIsLoading(false);
       }
     } else {
       console.error("Missing email or profileId", { email, profileId: data.profileId });
       toast.error("Email ou profil manquant");
+      setIsLoading(false);
     }
   };
 

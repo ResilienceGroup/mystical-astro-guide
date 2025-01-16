@@ -13,11 +13,28 @@ export const useQuizNavigation = () => {
     if (step === 4) {
       try {
         console.log('Creating empty report for profile:', quizData.profileId);
+        const { data: existingReport } = await supabase
+          .from('reports')
+          .select()
+          .eq('profile_id', quizData.profileId)
+          .maybeSingle();
+
+        if (existingReport) {
+          console.log('Report already exists for this profile');
+          return;
+        }
+
         const { data: reportData, error: reportError } = await supabase
           .from('reports')
           .insert({
             profile_id: quizData.profileId,
-            content: {}
+            content: {},
+            personality_analysis: "Analyse en cours de génération...",
+            opportunities: "Analyse en cours de génération...",
+            challenges: "Analyse en cours de génération...",
+            love_insights: "Analyse en cours de génération...",
+            career_guidance: "Analyse en cours de génération...",
+            spiritual_growth: "Analyse en cours de génération..."
           })
           .select()
           .single();

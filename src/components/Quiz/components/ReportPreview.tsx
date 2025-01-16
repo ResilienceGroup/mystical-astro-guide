@@ -1,37 +1,44 @@
 import { QuizData } from "../types/quiz";
+import { Loader2 } from "lucide-react";
 
 interface ReportPreviewProps {
   data: QuizData;
+  isLoading?: boolean;
 }
 
-export const ReportPreview = ({ data }: ReportPreviewProps) => {
+export const ReportPreview = ({ data, isLoading = false }: ReportPreviewProps) => {
   return (
-    <div className="space-y-4 opacity-50 pointer-events-none">
-      <div className="p-6 rounded-lg bg-white/5 space-y-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
-        <h3 className="relative z-10 text-xl font-display text-white">Ton Analyse Personnelle</h3>
-        <p className="relative z-10 text-white/80">
-          {data.name}, voici ton analyse astrologique basée sur ta date de naissance...
-        </p>
-        <div className="relative z-10 p-4 bg-white/5 rounded-lg">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-white/90 font-medium">15 JAN — 22 JAN</p>
-              <p className="text-sm text-white/60">Période clé</p>
+    <div className="space-y-4">
+      <div className="p-6 rounded-lg bg-white/5 space-y-4 relative">
+        <h3 className="text-xl font-display text-white">Ton Analyse Personnelle</h3>
+        <div className="relative">
+          {isLoading ? (
+            <div className="flex items-center space-x-2 text-white/80">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span>Génération de ton analyse en cours...</span>
             </div>
-            <span className="text-xs px-2 py-1 bg-[#8639F6]/20 text-[#8639F6] rounded">
-              AMOUR
-            </span>
-          </div>
+          ) : (
+            <p className="text-white/80">
+              {data.name}, voici ton analyse astrologique basée sur ta date de naissance...
+            </p>
+          )}
         </div>
       </div>
 
-      <div className="p-6 rounded-lg bg-white/5 space-y-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
-        <h3 className="relative z-10 text-xl font-display text-white">Tes Opportunités</h3>
-        <p className="relative z-10 text-white/80">
-          Les aspects planétaires indiquent une période favorable pour...
-        </p>
+      <div className="p-6 rounded-lg bg-white/5 space-y-4 relative">
+        <h3 className="text-xl font-display text-white">Tes Opportunités</h3>
+        <div className="relative">
+          {isLoading ? (
+            <div className="flex items-center space-x-2 text-white/80">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span>Analyse de tes opportunités en cours...</span>
+            </div>
+          ) : (
+            <p className="text-white/80">
+              Les aspects planétaires indiquent une période favorable pour...
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );

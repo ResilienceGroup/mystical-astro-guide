@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { EmailForm } from "../components/EmailForm";
 import { ReportSection } from "../components/ReportSection";
+import { ReportPreview } from "../components/ReportPreview";
 import { ReportSection as ReportSectionType } from "../types/report";
 
 interface QuizFinalProps {
@@ -53,8 +54,8 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
         console.log("Report data received:", reportData);
         if (!reportData) {
           console.error("No report found for profile:", data.profileId);
-          toast.error("Le rapport est en cours de génération, veuillez patienter quelques secondes et réessayer");
-          setIsLoading(false);
+          onDataUpdate({ email });
+          setReportData([]);
           return;
         }
 
@@ -119,6 +120,8 @@ export const QuizFinal = ({ onDataUpdate, data }: QuizFinalProps) => {
           setEmail={setEmail}
           onSubmit={handleSubmit}
         />
+      ) : reportData.length === 0 ? (
+        <ReportPreview data={data} isLoading={true} />
       ) : (
         <div className="space-y-6">
           <div className="text-center space-y-4">

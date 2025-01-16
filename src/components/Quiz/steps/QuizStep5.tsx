@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { QuizData } from "../types/quiz";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface QuizStep5Props {
   onNext: () => void;
@@ -10,16 +12,34 @@ interface QuizStep5Props {
 
 export const QuizStep5 = ({ onNext, onDataUpdate, data }: QuizStep5Props) => {
   const [selectedGoals, setSelectedGoals] = useState<string[]>(data.goals || []);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const goals = [
-    { label: "Harmonie familiale", value: "family", emoji: "👨‍👩‍👧‍👦" },
-    { label: "Carrière", value: "career", emoji: "💼" },
-    { label: "Santé", value: "health", emoji: "🧘‍♀️" },
-    { label: "Mariage", value: "marriage", emoji: "💍" },
-    { label: "Voyages", value: "travel", emoji: "✈️" },
-    { label: "Éducation", value: "education", emoji: "📚" },
-    { label: "Amitié", value: "friends", emoji: "🤝" },
-  ];
+  const updateQuizResponse = async (goals: string[]) => {
+    if (!data.profileId) {
+      console.error('No profile ID available');
+      toast.error("Erreur: ID de profil manquant");
+      return;
+    }
+
+    console.log('Updating quiz response with goals:', goals);
+    
+    const { error } = await supabase
+      .from('quiz_responses')
+      .update({ 
+        goals: goals,
+        updated_at: new Date().toISOString()
+      })
+      .eq('profile_id', data.profileId);
+
+    if (error) {
+      console.error('Error updating quiz response:', error);
+      toast.error(`Erreur lors de la mise à jour: ${error.message}`);
+      throw error;
+    }
+
+    console.log('Goals updated successfully');
+    toast.success("Objectifs enregistrés avec succès");
+  };
 
   const toggleGoal = (value: string) => {
     setSelectedGoals(prev => {
@@ -30,12 +50,32 @@ export const QuizStep5 = ({ onNext, onDataUpdate, data }: QuizStep5Props) => {
     });
   };
 
-  const handleNext = () => {
-    if (selectedGoals.length > 0) {
-      onDataUpdate({ goals: selectedGoals });
+  const handleNext = async () => {
+    if (selectedGoals.length === 0) return;
+
+    setIsSubmitting(true);
+    try {
+      await updateQuizResponse(selectedGoals);
+      await onDataUpdate({ goals: selectedGoals });
       onNext();
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
+      console.error('Error updating goals:', error);
+      toast.error(`Erreur lors de l'enregistrement: ${errorMessage}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  const goals = [
+    { label: "Harmonie familiale", value: "family", emoji: "👨‍👩‍👧‍👦" },
+    { label: "Carrière", value: "career", emoji: "💼" },
+    { label: "Santé", value: "health", emoji: "🧘‍♀️" },
+    { label: "Mariage", value: "marriage", emoji: "💍" },
+    { label: "Voyages", value: "travel", emoji: "✈️" },
+    { label: "Éducation", value: "education", emoji: "📚" },
+    { label: "Amitié", value: "friends", emoji: "🤝" },
+  ];
 
   return (
     <div className="space-y-6">
@@ -55,7 +95,7 @@ export const QuizStep5 = ({ onNext, onDataUpdate, data }: QuizStep5Props) => {
                 : "text-white border-white/20 hover:bg-white/10"
             }`}
             onClick={() => toggleGoal(goal.value)}
-            disabled={selectedGoals.length >= 3 && !selectedGoals.includes(goal.value)}
+            disabled={selectedGoals.length >= 3 && !selectedGoals.includes(goal.value) || isSubmitting}
           >
             <span className="mr-2 text-xl">{goal.emoji}</span>
             {goal.label}
@@ -66,9 +106,9 @@ export const QuizStep5 = ({ onNext, onDataUpdate, data }: QuizStep5Props) => {
       <Button
         className="w-full bg-primary hover:bg-primary/90"
         onClick={handleNext}
-        disabled={selectedGoals.length === 0}
+        disabled={selectedGoals.length === 0 || isSubmitting}
       >
-        Continuer
+        {isSubmitting ? "Enregistrement..." : "Continuer"}
       </Button>
     </div>
   );

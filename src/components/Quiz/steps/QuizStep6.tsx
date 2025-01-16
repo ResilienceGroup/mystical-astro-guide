@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { QuizData } from "../types/quiz";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface QuizStep6Props {
   onNext: () => void;
@@ -11,12 +13,50 @@ interface QuizStep6Props {
 
 export const QuizStep6 = ({ onNext, onDataUpdate, data }: QuizStep6Props) => {
   const [birthTime, setBirthTime] = useState(data.birthTime || "");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const updateQuizResponse = async (birthTime: string) => {
+    if (!data.profileId) {
+      console.error('No profile ID available');
+      toast.error("Erreur: ID de profil manquant");
+      return;
+    }
+
+    console.log('Updating quiz response with birth time:', birthTime);
+    
+    const { error } = await supabase
+      .from('quiz_responses')
+      .update({ 
+        birth_time: birthTime,
+        updated_at: new Date().toISOString()
+      })
+      .eq('profile_id', data.profileId);
+
+    if (error) {
+      console.error('Error updating quiz response:', error);
+      toast.error(`Erreur lors de la mise à jour: ${error.message}`);
+      throw error;
+    }
+
+    console.log('Birth time updated successfully');
+    toast.success("Heure de naissance enregistrée avec succès");
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (birthTime) {
-      onDataUpdate({ birthTime });
+    if (!birthTime) return;
+
+    setIsSubmitting(true);
+    try {
+      await updateQuizResponse(birthTime);
+      await onDataUpdate({ birthTime });
       onNext();
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
+      console.error('Error updating birth time:', error);
+      toast.error(`Erreur lors de l'enregistrement: ${errorMessage}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -41,9 +81,9 @@ export const QuizStep6 = ({ onNext, onDataUpdate, data }: QuizStep6Props) => {
       <Button
         type="submit"
         className="w-full bg-primary hover:bg-primary/90"
-        disabled={!birthTime}
+        disabled={!birthTime || isSubmitting}
       >
-        Continuer
+        {isSubmitting ? "Enregistrement..." : "Continuer"}
       </Button>
     </form>
   );

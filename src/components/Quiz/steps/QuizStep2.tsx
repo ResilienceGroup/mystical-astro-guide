@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { QuizData } from "../types/quiz";
+import { useState, useCallback } from "react";
 import { zodiac } from "@/lib/zodiac";
 import { isValid } from "date-fns";
 import { BirthDateInput } from "./birthdate/BirthDateInput";
 import { ZodiacDisplay } from "./birthdate/ZodiacDisplay";
 import { toast } from "sonner";
-import { useCallback, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface QuizStep2Props {
   onNext: () => void;
@@ -60,6 +61,33 @@ export const QuizStep2 = ({ onNext, onDataUpdate, data }: QuizStep2Props) => {
     }, 500);
   }, [getZodiacSign]);
 
+  const updateQuizResponse = async (birthDate: Date) => {
+    if (!data.profileId) {
+      console.error('No profile ID available');
+      toast.error("Erreur: ID de profil manquant");
+      return;
+    }
+
+    console.log('Updating quiz response with birth date:', birthDate);
+    
+    const { error } = await supabase
+      .from('quiz_responses')
+      .update({ 
+        birth_date: birthDate.toISOString(),
+        updated_at: new Date().toISOString()
+      })
+      .eq('profile_id', data.profileId);
+
+    if (error) {
+      console.error('Error updating quiz response:', error);
+      toast.error(`Erreur lors de la mise à jour: ${error.message}`);
+      throw error;
+    }
+
+    console.log('Birth date updated successfully');
+    toast.success("Date de naissance enregistrée avec succès");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -73,14 +101,8 @@ export const QuizStep2 = ({ onNext, onDataUpdate, data }: QuizStep2Props) => {
     console.log('Submitting birth date:', birthDate);
 
     try {
-      if (!data.profileId) {
-        console.error('No profile ID available');
-        toast.error("Erreur: ID de profil manquant");
-        return;
-      }
-
+      await updateQuizResponse(birthDate);
       await onDataUpdate({ birthDate });
-      console.log('Birth date updated successfully');
       onNext();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';

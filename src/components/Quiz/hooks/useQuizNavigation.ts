@@ -9,11 +9,23 @@ export const useQuizNavigation = () => {
   
   const totalSteps = 8;
 
-  const generateReport = async (quizData: QuizData) => {
+  const createEmptyReport = async (quizData: QuizData) => {
     try {
-      console.log('Creating report for profile:', quizData.profileId);
+      console.log('Creating empty report for profile:', quizData.profileId);
       
-      // Create empty report first
+      // Check if report already exists
+      const { data: existingReport } = await supabase
+        .from('reports')
+        .select()
+        .eq('profile_id', quizData.profileId)
+        .maybeSingle();
+
+      if (existingReport) {
+        console.log('Report already exists for this profile');
+        return;
+      }
+
+      // Create empty report
       const { data: reportData, error: reportError } = await supabase
         .from('reports')
         .insert({
@@ -34,15 +46,22 @@ export const useQuizNavigation = () => {
         throw reportError;
       }
       console.log('Empty report created:', reportData);
+      return reportData;
+    } catch (error) {
+      console.error('Error in createEmptyReport:', error);
+      throw error;
+    }
+  };
 
-      // Call OpenAI to generate report content
+  const generateReportContent = async (quizData: QuizData, reportId: string) => {
+    try {
       console.log('Calling generate-report function with data:', {
         name: quizData.name,
         birthDate: quizData.birthDate,
         birthPlace: quizData.birthPlace,
         birthTime: quizData.birthTime,
         profileId: quizData.profileId,
-        reportId: reportData.id
+        reportId: reportId
       });
 
       const response = await fetch(
@@ -59,7 +78,7 @@ export const useQuizNavigation = () => {
             birthPlace: quizData.birthPlace,
             birthTime: quizData.birthTime,
             profileId: quizData.profileId,
-            reportId: reportData.id
+            reportId: reportId
           }),
         }
       );
@@ -73,7 +92,7 @@ export const useQuizNavigation = () => {
       console.log("Report generation initiated successfully");
       toast.success("Génération du rapport initiée");
     } catch (error) {
-      console.error('Error in generateReport:', error);
+      console.error('Error in generateReportContent:', error);
       toast.error("Une erreur est survenue lors de la génération du rapport");
     }
   };
@@ -87,9 +106,17 @@ export const useQuizNavigation = () => {
     const nextStep = Math.min(step + 1, totalSteps);
     setStep(nextStep);
     
-    // Start report generation after step 4
+    // Create empty report and start generation after step 4
     if (step === 4) {
-      await generateReport(quizData);
+      try {
+        const report = await createEmptyReport(quizData);
+        if (report) {
+          await generateReportContent(quizData, report.id);
+        }
+      } catch (error) {
+        console.error('Error in report creation process:', error);
+        toast.error("Une erreur est survenue lors de la création du rapport");
+      }
     }
   };
 

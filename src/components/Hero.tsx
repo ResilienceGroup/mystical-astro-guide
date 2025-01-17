@@ -49,14 +49,14 @@ export const Hero = () => {
           les milliardaires oui
         </h1>
         <p className="text-lg md:text-xl mb-8 text-gray-300 max-w-2xl mx-auto">
-          Découvrez comment l'astrologie peut guider vos décisions stratégiques et maximiser le potentiel de votre entreprise.
+          Découvre comment l'astrologie peut guider tes décisions stratégiques et maximiser le potentiel de ton entreprise.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
           <Button
             className="bg-primary hover:bg-primary/90 text-white px-8 py-6 text-lg rounded-full w-full sm:w-auto"
             onClick={() => window.open("https://app.moon-astral.com", "_blank")}
           >
-            Obtenir le thème astral de mon entreprise
+            Obtenir le thème astral de ton entreprise
           </Button>
         </div>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

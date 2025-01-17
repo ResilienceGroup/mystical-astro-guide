@@ -4,17 +4,17 @@ export const Features = () => {
   const features = [
     {
       title: "Analyse Entrepreneuriale",
-      description: "Découvrez les meilleurs moments pour lancer vos projets et prendre des décisions stratégiques.",
+      description: "Découvre les meilleurs moments pour lancer tes projets et prendre des décisions stratégiques.",
       image: "/lovable-uploads/337921d3-802a-4a13-8844-92799ccef1bd.png"
     },
     {
       title: "Cycles Économiques",
-      description: "Anticipez les cycles économiques grâce à l'astrologie financière et optimisez vos investissements.",
+      description: "Anticipe les cycles économiques grâce à l'astrologie financière et optimise tes investissements.",
       image: "/lovable-uploads/dfb0e451-5da5-408b-8428-a9dcafaeaabb.png"
     },
     {
       title: "Conseils Stratégiques IA",
-      description: "Obtenez des conseils personnalisés basés sur votre thème astral d'entreprise et les cycles planétaires.",
+      description: "Obtiens des conseils personnalisés basés sur ton thème astral d'entreprise et les cycles planétaires.",
       image: "/lovable-uploads/dacff616-e520-4573-953d-33891a39bac9.png"
     }
   ];
@@ -23,7 +23,7 @@ export const Features = () => {
     <div className="bg-black/95 py-20 px-4">
       <div className="max-w-6xl mx-auto">
         <h2 className="font-display text-3xl md:text-4xl text-white text-center mb-16">
-          L'astrologie au service de votre réussite entrepreneuriale
+          L'astrologie au service de ta réussite entrepreneuriale
         </h2>
         <div className="grid md:grid-cols-3 gap-12">
           {features.map((feature, index) => (

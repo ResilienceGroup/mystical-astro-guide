@@ -8,7 +8,6 @@ export const Hero = () => {
   return (
     <div className="relative min-h-screen flex items-center justify-center text-white py-20 px-4 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-[#8639F6] to-black z-0">
-        {/* Animated stars background */}
         <div className="absolute inset-0" style={{
           background: `
             radial-gradient(1px 1px at 20px 30px, white, rgba(0,0,0,0)),
@@ -45,19 +44,19 @@ export const Hero = () => {
           />
         </div>
         <h1 className="font-display text-4xl md:text-6xl mb-6 leading-tight">
-          L'Astrologie pour prendre la bonne décision,
+          Les millionaires n'utilisent pas l'astrologie,
           <br />
-          au bon moment
+          les milliardaires oui
         </h1>
         <p className="text-lg md:text-xl mb-8 text-gray-300 max-w-2xl mx-auto">
-          Amour, bien-être, carrière, grandes étapes de vie : chaque question trouve une réponse personnalisée, basée sur ton thème astral.
+          Découvrez comment l'astrologie peut guider vos décisions stratégiques et maximiser le potentiel de votre entreprise.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
           <Button
             className="bg-primary hover:bg-primary/90 text-white px-8 py-6 text-lg rounded-full w-full sm:w-auto"
             onClick={() => window.open("https://app.moon-astral.com", "_blank")}
           >
-            Obtenir ta prédiction personnalisée
+            Obtenir le thème astral de mon entreprise
           </Button>
         </div>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

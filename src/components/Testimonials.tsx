@@ -1,19 +1,19 @@
 export const Testimonials = () => {
   const testimonials = [
     {
-      text: "Moon Astral m'a aidé à prendre des décisions importantes dans ma carrière. Les prédictions étaient étonnamment précises !",
-      author: "Marie L.",
-      role: "Entrepreneure"
-    },
-    {
-      text: "L'analyse de compatibilité amoureuse a été révélatrice. Je comprends tellement mieux ma relation maintenant.",
-      author: "Sophie D.",
-      role: "Coach de vie"
-    },
-    {
-      text: "Les conseils quotidiens sont devenus une partie essentielle de ma routine. C'est comme avoir un guide personnel.",
+      text: "Moon Astral m'a aidé à identifier le meilleur moment pour lever des fonds. Les prédictions étaient étonnamment précises et m'ont permis de sécuriser 2M€ !",
       author: "Thomas B.",
-      role: "Directeur Marketing"
+      role: "CEO & Fondateur"
+    },
+    {
+      text: "L'analyse des cycles économiques m'a permis d'anticiper les tendances du marché. J'ai pu adapter ma stratégie et doubler mon chiffre d'affaires en 6 mois.",
+      author: "Marie L.",
+      role: "Directrice Commerciale"
+    },
+    {
+      text: "Les conseils quotidiens sont devenus essentiels dans ma prise de décision. C'est comme avoir un conseiller stratégique personnel disponible 24/7.",
+      author: "Alexandre D.",
+      role: "Serial Entrepreneur"
     }
   ];
 
@@ -21,7 +21,7 @@ export const Testimonials = () => {
     <div className="bg-black py-20 px-4">
       <div className="max-w-6xl mx-auto">
         <h2 className="font-display text-3xl md:text-4xl text-white text-center mb-16">
-          Ce que disent nos utilisateurs
+          Ce qu'en disent les entrepreneurs
         </h2>
         <div className="grid md:grid-cols-3 gap-8">
           {testimonials.map((testimonial, index) => (
